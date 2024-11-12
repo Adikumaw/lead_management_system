@@ -1,0 +1,36 @@
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    active TINYINT(1) DEFAULT 1,  -- 1 for active, 0 for inactive
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE leads (
+    lead_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,  -- Foreign key linking to the users table
+    stage ENUM('hot', 'warm', 'cold', 'not interested', 'not answer', 'proposal', 'meeting fixed', 
+               'converted to clients', 'meeting completed', 'active', 'converted to hot deals') NOT NULL,
+    client_name VARCHAR(100) NOT NULL,
+    client_contact_no VARCHAR(15) NOT NULL,
+    client_email_id VARCHAR(100),
+    follow_up DATETIME,
+    executive VARCHAR(100) NOT NULL,
+    status ENUM('unattended', 'blocked', 'proposal sent', 'spoke', 'meeting fixed', 'met', 
+                'closed', 'lost', 'active', 'converted to hot deals', 
+                'converted to customer', 'converted to support ticket') NOT NULL,
+    enquiry_type ENUM('flight booking', 'hotel booking', 'sight seeing', 'transport', 'other') NOT NULL,
+    package VARCHAR(255),
+    planned_travel_date DATETIME,
+    destination VARCHAR(100),
+    no_of_adults INT DEFAULT 0,
+    budget_per_adult DECIMAL(10,2) DEFAULT 0.00,
+    number_of_children INT DEFAULT 0,
+    budget_per_children DECIMAL(10,2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE  -- Cascade delete leads when user is deleted
+);
+
