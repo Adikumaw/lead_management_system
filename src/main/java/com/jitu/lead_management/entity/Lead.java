@@ -2,6 +2,8 @@ package com.jitu.lead_management.entity;
 
 import java.util.Date;
 
+import com.jitu.lead_management.model.CreateLeadModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +26,7 @@ public class Lead {
     @Column(name = "lead_id")
     private int leadId;
     @Column(name = "user_id")
-    private String userId;
+    private int userId;
     // allowed values
     // enum('hot','warm','cold','not interested','not answer','proposal','meeting
     // fixed','converted to clients','meeting completed','active','converted to hot
@@ -54,7 +56,7 @@ public class Lead {
     @Column(name = "package")
     private String packageName;
     @Column(name = "planned_travel_date")
-    private String plannedTravelDate;
+    private Date plannedTravelDate;
     @Column(name = "destination")
     private String destination;
     @Column(name = "no_of_adults")
@@ -70,9 +72,9 @@ public class Lead {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    public Lead(String userId, String stage, String clientName, String clientContactNo, String clientEmailId,
+    public Lead(int userId, String stage, String clientName, String clientContactNo, String clientEmailId,
             Date followUp, String executive, String status, String enquiryType, String packageName,
-            String plannedTravelDate, String destination, int noOfAdults, Double budgetPerAdult, int noOfChildren,
+            Date plannedTravelDate, String destination, int noOfAdults, Double budgetPerAdult, int noOfChildren,
             Double budgetPerChild) {
         this.userId = userId;
         this.stage = stage;
@@ -90,6 +92,27 @@ public class Lead {
         this.budgetPerAdult = budgetPerAdult;
         this.noOfChildren = noOfChildren;
         this.budgetPerChild = budgetPerChild;
+        this.createdAt = new Date();
+        this.updatedAt = createdAt;
+    }
+
+    public Lead(int userId, CreateLeadModel lead) {
+        this.userId = userId;
+        this.stage = lead.getStage();
+        this.clientName = lead.getClientName();
+        this.clientContactNo = lead.getClientContactNo();
+        this.clientEmailId = lead.getClientEmailId();
+        this.followUp = lead.getFollowUp();
+        this.executive = lead.getExecutive();
+        this.status = lead.getStatus();
+        this.enquiryType = lead.getEnquiryType();
+        this.packageName = lead.getPackageName();
+        this.plannedTravelDate = lead.getPlannedTravelDate();
+        this.destination = lead.getDestination();
+        this.noOfAdults = lead.getNoOfAdults();
+        this.budgetPerAdult = lead.getBudgetPerAdult();
+        this.noOfChildren = lead.getNoOfChildren();
+        this.budgetPerChild = lead.getBudgetPerChild();
         this.createdAt = new Date();
         this.updatedAt = createdAt;
     }

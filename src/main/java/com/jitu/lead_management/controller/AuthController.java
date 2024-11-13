@@ -43,6 +43,11 @@ public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
+    @GetMapping("/test")
+    public String getMethodName(@RequestParam String param) {
+        return new String("sucessful: " + param);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
         // Authenticate username and password

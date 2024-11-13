@@ -22,6 +22,8 @@ public class JWTAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         System.out.println("jwtEntryPoint Handler: ");
 
+        // System.out.println(request + "\n" + response + "\n" + authException);
+
         PrintWriter writer = response.getWriter();
         writer.println("Access denied !! " + authException.getMessage());
     }

@@ -7,6 +7,8 @@ import javax.crypto.SecretKey;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.jitu.lead_management.exception.InvalidJWTHeaderException;
+
 import io.jsonwebtoken.Jwts;
 
 @Service
@@ -60,11 +62,9 @@ public class JWTServiceImpl implements JWTService {
     }
 
     @Override
-    public Boolean verifyJwtHeader(String header) {
-        if (header != null && header.startsWith("Bearer ")) {
-            return true;
-        } else {
-            return false;
+    public void verifyJwtHeader(String header) {
+        if (header == null || !header.startsWith("Bearer ")) {
+            throw new InvalidJWTHeaderException("Error: Invalid JWTHeader");
         }
     }
 }

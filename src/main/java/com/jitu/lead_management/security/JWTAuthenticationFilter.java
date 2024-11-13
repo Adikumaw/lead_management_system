@@ -39,14 +39,13 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String reference = null;
         String token = null;
 
-        if (jwtService.verifyJwtHeader(requestHeader)) {
+        try {
+            jwtService.verifyJwtHeader(requestHeader);
             // extract token from request header
             token = requestHeader.substring(7);
-            try {
-                reference = this.jwtService.fetchReference(token);
-            } catch (Exception e) {
-                logger.error("Reference Fetcher failed: " + e.getMessage());
-            }
+            reference = this.jwtService.fetchReference(token);
+        } catch (Exception e) {
+            logger.error("Reference Fetcher failed: " + e.getMessage());
         }
 
         if (reference != null && SecurityContextHolder.getContext().getAuthentication() == null) {

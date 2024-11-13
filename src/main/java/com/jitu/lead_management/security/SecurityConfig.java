@@ -30,8 +30,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/verify-user").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/signin/resend-token").permitAll()
-                // SELLER ENDPOINTS
-                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll());
+                // .requestMatchers(HttpMethod.GET, "/api/leads/create").permitAll()
+                // .requestMatchers(HttpMethod.GET, "/api/auth/test").
+                .anyRequest().authenticated());
 
         // transfering exception control to JWTAuthenticationEntryPoint
         http.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint));
