@@ -72,30 +72,6 @@ public class Lead {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    public Lead(int userId, String stage, String clientName, String clientContactNo, String clientEmailId,
-            Date followUp, String executive, String status, String enquiryType, String packageName,
-            Date plannedTravelDate, String destination, int noOfAdults, Double budgetPerAdult, int noOfChildren,
-            Double budgetPerChild) {
-        this.userId = userId;
-        this.stage = stage;
-        this.clientName = clientName;
-        this.clientContactNo = clientContactNo;
-        this.clientEmailId = clientEmailId;
-        this.followUp = followUp;
-        this.executive = executive;
-        this.status = status;
-        this.enquiryType = enquiryType;
-        this.packageName = packageName;
-        this.plannedTravelDate = plannedTravelDate;
-        this.destination = destination;
-        this.noOfAdults = noOfAdults;
-        this.budgetPerAdult = budgetPerAdult;
-        this.noOfChildren = noOfChildren;
-        this.budgetPerChild = budgetPerChild;
-        this.createdAt = new Date();
-        this.updatedAt = createdAt;
-    }
-
     public Lead(int userId, CreateLeadModel lead) {
         this.userId = userId;
         this.stage = lead.getStage();
