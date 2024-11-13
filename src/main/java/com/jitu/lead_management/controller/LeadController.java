@@ -36,9 +36,8 @@ public class LeadController {
 
         System.out.println("inside create method");
 
-        jwtService.verifyJwtHeader(jwtHeader);
         // extract token from request header
-        String jwtToken = jwtHeader.substring(7);
+        String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
 
         try {
             String reference = jwtService.fetchReference(jwtToken);

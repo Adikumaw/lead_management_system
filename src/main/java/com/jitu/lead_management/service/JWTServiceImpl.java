@@ -62,9 +62,10 @@ public class JWTServiceImpl implements JWTService {
     }
 
     @Override
-    public void verifyJwtHeader(String header) {
+    public String resolveJwtHeader(String header) {
         if (header == null || !header.startsWith("Bearer ")) {
             throw new InvalidJWTHeaderException("Error: Invalid JWTHeader");
         }
+        return header.substring(7);
     }
 }

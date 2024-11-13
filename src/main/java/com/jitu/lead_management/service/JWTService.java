@@ -15,5 +15,5 @@ public interface JWTService {
 
     Boolean validateToken(String token, UserDetails user);
 
-    void verifyJwtHeader(String header);
+    String resolveJwtHeader(String header);
 }

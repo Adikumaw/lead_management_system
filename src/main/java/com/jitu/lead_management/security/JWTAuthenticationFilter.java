@@ -12,6 +12,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.jitu.lead_management.exception.InvalidJWTHeaderException;
 import com.jitu.lead_management.service.JWTService;
 
 import jakarta.servlet.FilterChain;
@@ -31,8 +32,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-            FilterChain filterChain)
+    protected void doFilterInternal(@SuppressWarnings("null") HttpServletRequest request,
+            @SuppressWarnings("null") HttpServletResponse response,
+            @SuppressWarnings("null") FilterChain filterChain)
             throws ServletException, IOException {
 
         String requestHeader = request.getHeader("Authorization");
@@ -40,10 +42,10 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String token = null;
 
         try {
-            jwtService.verifyJwtHeader(requestHeader);
             // extract token from request header
-            token = requestHeader.substring(7);
+            token = jwtService.resolveJwtHeader(requestHeader);
             reference = this.jwtService.fetchReference(token);
+        } catch (InvalidJWTHeaderException e) {
         } catch (Exception e) {
             logger.error("Reference Fetcher failed: " + e.getMessage());
         }

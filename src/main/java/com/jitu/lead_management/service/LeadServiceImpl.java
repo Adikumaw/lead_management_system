@@ -1,9 +1,5 @@
 package com.jitu.lead_management.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +21,6 @@ public class LeadServiceImpl implements LeadService {
         int userId = userService.findUserIdByEmail(reference);
 
         Lead lead = new Lead(userId, requestLead);
-        System.out.println(lead);
         leadRepository.save(lead);
     }
 }
