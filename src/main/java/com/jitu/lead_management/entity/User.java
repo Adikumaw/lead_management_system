@@ -2,7 +2,7 @@ package com.jitu.lead_management.entity;
 
 import java.util.Date;
 
-import com.jitu.lead_management.model.SignUpModel;
+import com.jitu.lead_management.model.SignInModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,10 +56,10 @@ public class User {
         this.verified = 0;
     }
 
-    public User(SignUpModel signUpModel) {
-        this.name = signUpModel.getUserName();
-        this.email = signUpModel.getEmail();
-        this.password = signUpModel.getPassword();
+    public User(SignInModel signInModel) {
+        this.name = signInModel.getName();
+        this.email = signInModel.getEmail();
+        this.password = signInModel.getPassword();
         this.active = 1;
         this.createdAt = new Date();
         this.updatedAt = this.createdAt;

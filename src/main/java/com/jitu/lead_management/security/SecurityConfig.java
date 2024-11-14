@@ -26,10 +26,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                 // Login & sign in ENDPOINTS
-                .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/verify-user").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/auth/signup/resend-token").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/signin/resend-token").permitAll()
                 // .requestMatchers(HttpMethod.GET, "/api/leads/create").permitAll()
                 // .requestMatchers(HttpMethod.GET, "/api/auth/test").
                 .anyRequest().authenticated());

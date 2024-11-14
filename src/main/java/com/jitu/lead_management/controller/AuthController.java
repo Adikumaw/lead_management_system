@@ -20,7 +20,7 @@ import com.jitu.lead_management.exception.UnknownErrorException;
 import com.jitu.lead_management.exception.UserException;
 import com.jitu.lead_management.model.JwtRequest;
 import com.jitu.lead_management.model.JwtResponse;
-import com.jitu.lead_management.model.SignUpModel;
+import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.security.CustomUserDetailsService;
 import com.jitu.lead_management.service.JWTService;
 import com.jitu.lead_management.service.UserAdvanceService;
@@ -48,8 +48,8 @@ public class AuthController {
         return new String("sucessful: " + param);
     }
 
-    @PostMapping("/signin")
-    public ResponseEntity<JwtResponse> signIn(@RequestBody JwtRequest request) {
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
         // Authenticate username and password
         this.doAuthenticate(request.getReference(), request.getPassword());
         // Fetch user details after authenticating
@@ -80,10 +80,10 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<String> register(@RequestBody SignUpModel signUpModel) {
+    @PostMapping("/signin")
+    public ResponseEntity<String> register(@RequestBody SignInModel signInModel) {
         try {
-            if (userAdvanceService.register(signUpModel)) {
+            if (userAdvanceService.register(signInModel)) {
                 return ResponseEntity.status(HttpStatus.OK).body("Success");
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to register");
@@ -96,7 +96,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/signup/resend-token")
+    @PostMapping("/signin/resend-token")
     public ResponseEntity<String> resendToken(@RequestBody String reference) {
         try {
             verificationTokenService.sender(reference);
