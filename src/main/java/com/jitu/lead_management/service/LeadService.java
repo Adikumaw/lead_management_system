@@ -11,7 +11,13 @@ public interface LeadService {
 
     List<LeadViewModel> getLeads(String reference);
 
-    List<LeadViewModel> getLeadsByIds(List<String> leadIds, String reference);
+    List<LeadViewModel> getLeads(int userId);
 
     LeadViewModel getLeadById(String leadId, String reference);
+
+    List<LeadViewModel> deleteLeadsByIds(List<String> leadIds, String reference);
+
+    List<LeadViewModel> deleteAllLeads(String reference);
+
+    List<LeadViewModel> deleteByLeadId(String leadId, String reference);
 }
