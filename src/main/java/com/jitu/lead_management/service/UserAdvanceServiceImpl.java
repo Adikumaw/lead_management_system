@@ -30,7 +30,8 @@ public class UserAdvanceServiceImpl implements UserAdvanceService {
     // private static final String verificationLink =
     // "http://localhost:8080/api/users/verify-update?token=";
 
-    private static final Logger logger = LoggerFactory.getLogger(UserAdvanceServiceImpl.class);
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(UserAdvanceServiceImpl.class);
 
     // ----------------------------------------------------------------
     // service methods for user
