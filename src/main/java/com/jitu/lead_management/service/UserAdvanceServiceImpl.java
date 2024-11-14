@@ -1,7 +1,7 @@
 package com.jitu.lead_management.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,8 @@ public class UserAdvanceServiceImpl implements UserAdvanceService {
     // private static final String verificationLink =
     // "http://localhost:8080/api/users/verify-update?token=";
 
-    private static final Logger logger = LoggerFactory.getLogger(UserAdvanceServiceImpl.class);
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(UserAdvanceServiceImpl.class);
 
     // ----------------------------------------------------------------
     // service methods for user
