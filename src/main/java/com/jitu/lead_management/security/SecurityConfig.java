@@ -42,6 +42,8 @@ public class SecurityConfig {
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         // disabling csrf
         http.csrf(csrf -> csrf.disable());
+        // disabling cors
+        http.cors(cors -> cors.disable());
 
         return http.build();
     }
