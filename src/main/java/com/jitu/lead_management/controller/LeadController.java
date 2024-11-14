@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,24 +71,6 @@ public class LeadController {
         }
     }
 
-    @GetMapping("fetch-by-ids")
-    public List<LeadViewModel> getLeadsByIds(@RequestParam List<String> leadIds,
-            @RequestHeader("Authorization") String jwtHeader) {
-        // extract token from request header
-        String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-
-        try {
-            String reference = jwtService.fetchReference(jwtToken);
-
-            return leadService.getLeadsByIds(leadIds, reference);
-        } catch (LeadManagementException e) {
-            throw e;
-        } catch (Exception e) {
-            logger.error("Unknown error: " + e.getMessage(), e);
-            throw new UnknownErrorException("Error: unknown error");
-        }
-    }
-
     @GetMapping("fetch-by-id")
     public LeadViewModel getLeadById(@RequestParam String leadId,
             @RequestHeader("Authorization") String jwtHeader) {
@@ -98,6 +81,59 @@ public class LeadController {
             String reference = jwtService.fetchReference(jwtToken);
 
             return leadService.getLeadById(leadId, reference);
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
+    @DeleteMapping("delete-by-ids")
+    public List<LeadViewModel> deleteLeadsByIds(@RequestParam List<String> leadIds,
+            @RequestHeader("Authorization") String jwtHeader) {
+        // extract token from request header
+        String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
+
+        try {
+            String reference = jwtService.fetchReference(jwtToken);
+
+            return leadService.deleteLeadsByIds(leadIds, reference);
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
+    @DeleteMapping("delete-all")
+    public List<LeadViewModel> deleteAllLeads(@RequestHeader("Authorization") String jwtHeader) {
+        // extract token from request header
+        String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
+
+        try {
+            String reference = jwtService.fetchReference(jwtToken);
+
+            return leadService.deleteAllLeads(reference);
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
+    @DeleteMapping("delete-by-id")
+    public List<LeadViewModel> deleteByLeadId(@RequestParam String leadId,
+            @RequestHeader("Authorization") String jwtHeader) {
+        // extract token from request header
+        String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
+
+        try {
+            String reference = jwtService.fetchReference(jwtToken);
+
+            return leadService.deleteByLeadId(leadId, reference);
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {

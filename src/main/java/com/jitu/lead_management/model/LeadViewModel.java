@@ -71,6 +71,9 @@ public class LeadViewModel {
     // Adjusts Date to Asia/Kolkata time zone without changing the actual time
     // (keeping it intact)
     private Date adjustTimeZone(Date date) {
+        if (date == null) {
+            return null;
+        }
         ZonedDateTime utcTime = ZonedDateTime.ofInstant(date.toInstant(), ZoneId.of("UTC"));
         ZonedDateTime kolkataTime = utcTime.withZoneSameInstant(ZoneId.of("Asia/Kolkata"));
         return Date.from(kolkataTime.toInstant()); // Convert back to Date object

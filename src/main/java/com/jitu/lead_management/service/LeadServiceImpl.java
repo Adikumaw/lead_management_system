@@ -32,22 +32,16 @@ public class LeadServiceImpl implements LeadService {
     }
 
     @Override
-    public List<LeadViewModel> getLeads(String reference) {
-        int userId = userService.findUserIdByEmail(reference);
-
+    public List<LeadViewModel> getLeads(int userId) {
         List<Lead> leads = leadRepository.findAllByUserId(userId);
         return leads.stream().map(LeadViewModel::new).collect(Collectors.toList());
     }
 
     @Override
-    public List<LeadViewModel> getLeadsByIds(List<String> leadIds, String reference) {
+    public List<LeadViewModel> getLeads(String reference) {
         int userId = userService.findUserIdByEmail(reference);
 
-        // convert String of leadIds to original Integer lead IDs
-        List<Integer> intLeadIds = leadIds.stream().map(LeadUtils::resolveLeadId).collect(Collectors.toList());
-
-        // get leads by their IDs
-        List<Lead> leads = leadRepository.findAllByLeadIdInAndUserId(intLeadIds, userId);
+        List<Lead> leads = leadRepository.findAllByUserId(userId);
         return leads.stream().map(LeadViewModel::new).collect(Collectors.toList());
     }
 
@@ -63,6 +57,41 @@ public class LeadServiceImpl implements LeadService {
         }
 
         throw new LeadNotFoundException("Error: Lead not found");
+    }
+
+    @Override
+    public List<LeadViewModel> deleteLeadsByIds(List<String> leadIds, String reference) {
+        int userId = userService.findUserIdByEmail(reference);
+
+        // convert String of leadIds to original Integer lead IDs
+        List<Integer> intLeadIds = leadIds.stream().map(LeadUtils::resolveLeadId).collect(Collectors.toList());
+
+        leadRepository.deleteByLeadIdInAndUserId(intLeadIds, userId);
+
+        // fetch and return results
+        return getLeads(userId);
+    }
+
+    @Override
+    public List<LeadViewModel> deleteAllLeads(String reference) {
+        int userId = userService.findUserIdByEmail(reference);
+
+        leadRepository.deleteAllByUserId(userId);
+
+        // fetch and return results
+        return getLeads(userId);
+    }
+
+    @Override
+    public List<LeadViewModel> deleteByLeadId(String leadId, String reference) {
+        int userId = userService.findUserIdByEmail(reference);
+
+        int intLeadId = LeadUtils.resolveLeadId(leadId);
+
+        leadRepository.deleteByLeadIdAndUserId(intLeadId, userId);
+
+        // fetch and return results
+        return getLeads(userId);
     }
 
 }
