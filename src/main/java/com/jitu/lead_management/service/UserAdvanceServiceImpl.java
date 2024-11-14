@@ -13,7 +13,7 @@ import com.jitu.lead_management.exception.InvalidEmailException;
 import com.jitu.lead_management.exception.InvalidPasswordException;
 import com.jitu.lead_management.exception.UserException;
 import com.jitu.lead_management.exception.UserExistException;
-import com.jitu.lead_management.model.SignInModel;
+import com.jitu.lead_management.model.SignUpModel;
 
 @Service
 public class UserAdvanceServiceImpl implements UserAdvanceService {
@@ -37,20 +37,20 @@ public class UserAdvanceServiceImpl implements UserAdvanceService {
     // ----------------------------------------------------------------
 
     @Override
-    public boolean register(SignInModel signInModel) {
+    public boolean register(SignUpModel signUpModel) {
         // vrify user details
-        verifyUserDetails(signInModel);
+        verifyUserDetails(signUpModel);
 
         // encrypt password
         String encryptedPassword;
-        encryptedPassword = passwordEncoder.encode(signInModel.getPassword());
-        signInModel.setPassword(encryptedPassword);
+        encryptedPassword = passwordEncoder.encode(signUpModel.getPassword());
+        signUpModel.setPassword(encryptedPassword);
 
-        User user = new User(signInModel);
+        User user = new User(signUpModel);
 
         // fetch the old user id if it exists
-        if (userService.existsByEmailAndNotVerified(signInModel.getEmail())) {
-            int userId = userService.findUserIdByEmail(signInModel.getEmail());
+        if (userService.existsByEmailAndNotVerified(signUpModel.getEmail())) {
+            int userId = userService.findUserIdByEmail(signUpModel.getEmail());
             user.setUserId(userId);
         }
 
@@ -313,10 +313,10 @@ public class UserAdvanceServiceImpl implements UserAdvanceService {
     // helper methods
     // ----------------------------------------------------------------
 
-    public void verifyUserDetails(SignInModel signInModel) {
-        String name = signInModel.getName();
-        String email = signInModel.getEmail();
-        String password = signInModel.getPassword();
+    public void verifyUserDetails(SignUpModel signUpModel) {
+        String name = signUpModel.getUserName();
+        String email = signUpModel.getEmail();
+        String password = signUpModel.getPassword();
 
         // checking user name
         if (name == null || name == "") {
