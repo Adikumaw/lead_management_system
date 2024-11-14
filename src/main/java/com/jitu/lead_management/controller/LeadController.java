@@ -26,7 +26,6 @@ import com.jitu.lead_management.service.LeadService;
 
 @RestController
 @RequestMapping("/api/leads")
-@CrossOrigin
 public class LeadController {
 
     @Autowired
