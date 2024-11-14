@@ -96,7 +96,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/signin/resend-token")
+    @PostMapping("/signup/resend-token")
     public ResponseEntity<String> resendToken(@RequestBody String reference) {
         try {
             verificationTokenService.sender(reference);
