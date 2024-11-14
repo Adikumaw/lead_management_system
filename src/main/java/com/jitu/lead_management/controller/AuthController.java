@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jitu.lead_management.exception.UnknownErrorException;
 import com.jitu.lead_management.exception.UserException;
-import com.jitu.lead_management.model.JwtRequest;
 import com.jitu.lead_management.model.JwtResponse;
+import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignUpModel;
 import com.jitu.lead_management.security.CustomUserDetailsService;
 import com.jitu.lead_management.service.JWTService;
@@ -49,13 +49,13 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtResponse> signIn(@RequestBody JwtRequest request) {
+    public ResponseEntity<JwtResponse> signIn(@RequestBody SignInModel signInRequest) {
         // Authenticate username and password
-        this.doAuthenticate(request.getReference(), request.getPassword());
+        this.doAuthenticate(signInRequest.getReference(), signInRequest.getPassword());
         // Fetch user details after authenticating
         UserDetails userDetails = null;
         try {
-            userDetails = customUserDetailsService.loadUserByUsername(request.getReference());
+            userDetails = customUserDetailsService.loadUserByUsername(signInRequest.getReference());
         } catch (Exception e) {
             logger.error("Unknown error: ", e.getMessage(), e);
             throw new UnknownErrorException("Error: unknown error");
