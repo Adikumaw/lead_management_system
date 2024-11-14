@@ -29,7 +29,7 @@ import com.jitu.lead_management.service.VerificationTokenService;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class AuthController {
 
     @Autowired
