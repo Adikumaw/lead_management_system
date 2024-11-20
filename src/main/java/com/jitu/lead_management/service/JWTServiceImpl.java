@@ -19,14 +19,14 @@ public class JWTServiceImpl implements JWTService {
     SecretKey key = Jwts.SIG.HS256.key().build(); // or HS384.key() or HS512.key()
 
     @Override
-    public String generateToken(UserDetails user) {
+    public String generateToken(String reference) {
         // fetch authority/role from user details
         // SimpleGrantedAuthority role = (SimpleGrantedAuthority)
         // user.getAuthorities().toArray()[0];
 
         return Jwts.builder()
                 // .claim("role", role.getAuthority())
-                .subject(user.getUsername())
+                .subject(reference)
                 .issuedAt(new Date())
                 .expiration(new Date((new Date()).getTime() + EXPIRATION_TIME_LIMIT))
                 .signWith(key)

@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -26,8 +28,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private JWTService jwtService;
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    // @Autowired
+    // private CustomUserDetailsService customUserDetailsService;
 
     private static final Logger logger = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
@@ -52,7 +54,13 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         if (reference != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // fetch user detail from reference
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(reference);
+            // Removing this to prevent the dao operation cause it fails the jwt Ideology
+            // UserDetails userDetails =
+            // customUserDetailsService.loadUserByUsername(reference);
+
+            // creating custom user details
+            UserDetails userDetails = new User(reference, null, AuthorityUtils.NO_AUTHORITIES);
+
             Boolean validateToken = this.jwtService.validateToken(token, userDetails);
 
             if (validateToken) {
