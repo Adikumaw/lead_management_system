@@ -93,6 +93,20 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@RequestBody String email) {
+        try {
+            verificationTokenService.sender(email);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Success");
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
     @GetMapping("/test")
     public String getMethodName(@RequestParam String param) {
         return new String("sucessful: " + param);

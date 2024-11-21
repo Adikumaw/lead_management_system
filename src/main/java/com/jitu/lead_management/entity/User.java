@@ -46,6 +46,12 @@ public class User {
     @Column(name = "verified")
     private int verified;
 
+    @Column(name = "login")
+    private int login;
+
+    @Column(name = "login_attempts")
+    private int loginAttempts;
+
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
@@ -54,6 +60,8 @@ public class User {
         this.createdAt = new Date();
         this.updatedAt = this.createdAt;
         this.verified = 0;
+        this.login = 0;
+        this.loginAttempts = 0;
     }
 
     public User(SignUpModel signUpModel) {
@@ -64,9 +72,19 @@ public class User {
         this.createdAt = new Date();
         this.updatedAt = this.createdAt;
         this.verified = 0;
+        this.login = 0;
+        this.loginAttempts = 0;
     }
 
     public boolean isActive() {
         return active != 0 ? true : false;
+    }
+
+    public boolean isLogedIn() {
+        return login != 0 ? true : false;
+    }
+
+    public boolean isVerified() {
+        return verified != 0 ? true : false;
     }
 }
