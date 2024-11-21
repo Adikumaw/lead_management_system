@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import lombok.Data;
 
@@ -37,4 +38,15 @@ public class CreateLeadModel {
     private Integer noOfChildren;
     @JsonProperty("budget_per_child")
     private Double budgetPerChild;
+
+    @JsonSetter("")
+    public void setNoOfChildren(Integer noOfChildren) {
+        this.noOfChildren = noOfChildren == null ? 0 : noOfChildren;
+    }
+
+    @JsonSetter("")
+    public void setNoOfAdults(Integer noOfAdults) {
+        this.noOfAdults = noOfAdults == null ? 0 : noOfAdults;
+    }
+
 }
