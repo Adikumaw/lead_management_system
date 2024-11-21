@@ -59,7 +59,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             // customUserDetailsService.loadUserByUsername(reference);
 
             // creating custom user details
-            UserDetails userDetails = new User(reference, null, AuthorityUtils.NO_AUTHORITIES);
+            UserDetails userDetails = new User(reference, "", AuthorityUtils.NO_AUTHORITIES);
 
             Boolean validateToken = this.jwtService.validateToken(token, userDetails);
 
