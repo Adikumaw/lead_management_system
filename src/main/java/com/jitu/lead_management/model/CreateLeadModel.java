@@ -26,15 +26,15 @@ public class CreateLeadModel {
     @JsonProperty("package_name")
     private String packageName;
     @JsonProperty("planned_travel_date")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Kolkata")
     private Date plannedTravelDate;
     private String destination;
     @JsonProperty("no_of_adults")
-    private int noOfAdults;
+    private Integer noOfAdults;
     @JsonProperty("budget_per_adult")
     private Double budgetPerAdult;
     @JsonProperty("no_of_children")
-    private int noOfChildren;
+    private Integer noOfChildren;
     @JsonProperty("budget_per_child")
     private Double budgetPerChild;
 }
