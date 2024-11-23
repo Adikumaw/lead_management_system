@@ -6,6 +6,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.model.JwtResponse;
 import com.jitu.lead_management.model.SignInModel;
 
@@ -16,16 +17,13 @@ public class AuthServiceImpl implements AuthService {
     private JWTService jwtService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private UserService userService;
 
     @Override
     public JwtResponse authenticateAndGenerateToken(SignInModel signInRequest) {
         // Authenticate user
         doAuthenticate(signInRequest.getReference(), signInRequest.getPassword());
-
-        // Load user details
-        // Removing loadUserbyUsername cause user is already authenticated...
-        // UserDetails userDetails =
-        // customUserDetailsService.loadUserByUsername(signInRequest.getReference());
 
         // Generate JWT token
         String token = jwtService.generateToken(signInRequest.getReference());
@@ -48,4 +46,23 @@ public class AuthServiceImpl implements AuthService {
                     "Error: Invalid Username or Password !!");
         }
     }
+
+    @Override
+    public Boolean isUserVerified(User user) {
+        if (!user.isVerified()) {
+            throw new BadCredentialsException("User not verified with Reference : " + user.getEmail());
+        }
+        return true;
+    }
+
+    @Override
+    public User setUserActive(User user) {
+        // Verify that the user is Active
+        if (!user.isActive()) {
+            user.setActive(1);
+            user = userService.save(user);
+        }
+        return user;
+    }
+
 }

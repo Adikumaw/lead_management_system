@@ -4,7 +4,6 @@ package com.jitu.lead_management.security;
 // import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.AuthorityUtils;
 // import org.springframework.security.authentication.BadCredentialsException;
 // import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.exception.UserNotFoundException;
+import com.jitu.lead_management.service.AuthService;
 import com.jitu.lead_management.service.UserService;
 
 @Service
@@ -23,6 +23,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthService authService;
     // @Autowired
     // private RolesRepository rolesRepository;
 
@@ -32,18 +34,11 @@ public class CustomUserDetailsService implements UserDetailsService {
             // Fetch the user
             User user = userService.get(reference);
 
-            if (!user.isVerified()) {
-                throw new BadCredentialsException("User not verified with Reference : " + reference);
-            }
+            // Check if user is verified
+            authService.isUserVerified(user);
+            // Check if user is active
+            user = authService.setUserActive(user);
 
-            // Verify that the user is Active
-            if (!user.isActive()) {
-                // throw new DisabledException("User not Active with Reference : " +
-                // reference);
-                user.setActive(1);
-                userService.save(user);
-                return loadUserByUsername(reference);
-            }
             // Fetch User Roles
             // List<Roles> roles = rolesRepository.findByUserId(user.getUserId());
             // if (roles == null) {
@@ -62,6 +57,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             return new org.springframework.security.core.userdetails.User(reference, user.getPassword(),
                     user.isActive(),
                     true, true, true, AuthorityUtils.NO_AUTHORITIES);
+
         } catch (UserNotFoundException e) {
             throw new UsernameNotFoundException(e.getMessage());
         }
