@@ -58,7 +58,7 @@ public class AuthServiceImpl implements AuthService {
         // Validate and fetch user details
         Boolean isExpired = jwtService.isTokenExpired(refreshToken);
 
-        if (userService.existsByEmailAndRefreshToken(reference, refreshToken)) {
+        if (!userService.existsByEmailAndRefreshToken(reference, refreshToken)) {
             throw new UnableToRefreshTokenException("Error: Invalid Refresh Token");
         }
         if (isExpired) {
