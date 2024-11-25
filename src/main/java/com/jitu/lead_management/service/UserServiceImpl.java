@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             return user.get();
         }
-        throw new UserNotFoundException("Error: User not found by Email: " + email);
+        throw new UserNotFoundException("User not found by Email. Please Sign Up");
     }
 
     @Override
