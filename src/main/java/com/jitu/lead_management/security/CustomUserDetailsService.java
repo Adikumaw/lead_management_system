@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.exception.UserNotFoundException;
-import com.jitu.lead_management.service.AuthService;
 import com.jitu.lead_management.service.UserService;
+import com.jitu.lead_management.service.VerificationService;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserService userService;
     @Autowired
-    private AuthService authService;
+    private VerificationService verificationService;
     // @Autowired
     // private RolesRepository rolesRepository;
 
@@ -35,9 +35,9 @@ public class CustomUserDetailsService implements UserDetailsService {
             User user = userService.get(reference);
 
             // Check if user is verified
-            authService.isUserVerified(user);
+            verificationService.isUserVerified(user);
             // Check if user is active
-            user = authService.setUserActive(user);
+            user = verificationService.setUserActive(user);
 
             // Fetch User Roles
             // List<Roles> roles = rolesRepository.findByUserId(user.getUserId());
