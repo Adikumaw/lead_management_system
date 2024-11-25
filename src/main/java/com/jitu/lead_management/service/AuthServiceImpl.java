@@ -10,7 +10,6 @@ import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.exception.UnableToLoginException;
 import com.jitu.lead_management.exception.UnableToRefreshTokenException;
 import com.jitu.lead_management.model.JwtResponse;
-import com.jitu.lead_management.model.RefreshTokenModel;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
 
@@ -32,8 +31,12 @@ public class AuthServiceImpl implements AuthService {
             doAuthenticate(signInRequest.getReference(), signInRequest.getPassword());
         } catch (BadCredentialsException e) {
             // Do increment login attempts only if password is wrong.
-            throw new com.jitu.lead_management.exception.BadCredentialsException(
-                    "Error: Invalid Username or Password !!");
+            if (e.getMessage().startsWith("User not verified with Reference:")) {
+                throw new com.jitu.lead_management.exception.BadCredentialsException(e.getMessage());
+            } else {
+                throw new com.jitu.lead_management.exception.BadCredentialsException(
+                        "Error: Invalid Username or Password !!");
+            }
         }
         // Generate JWT token
         String token = jwtService.generateToken(signInRequest.getReference());
@@ -50,12 +53,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public JwtResponse authenticateAndRefreshToken(RefreshTokenModel refreshToken) {
-        String reference = jwtService.fetchReference(refreshToken.getRefreshToken());
+    public JwtResponse authenticateAndRefreshToken(String refreshToken) {
+        String reference = jwtService.fetchReference(refreshToken);
         // Validate and fetch user details
-        Boolean isExpired = jwtService.isTokenExpired(refreshToken.getRefreshToken());
+        Boolean isExpired = jwtService.isTokenExpired(refreshToken);
 
-        if (userService.existsByEmailAndRefreshToken(reference, refreshToken.getRefreshToken())) {
+        if (!userService.existsByEmailAndRefreshToken(reference, refreshToken)) {
             throw new UnableToRefreshTokenException("Error: Invalid Refresh Token");
         }
         if (isExpired) {

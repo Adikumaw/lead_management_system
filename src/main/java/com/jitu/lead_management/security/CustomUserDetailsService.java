@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.entity.User;
+import com.jitu.lead_management.exception.BadCredentialsException;
 import com.jitu.lead_management.exception.UserNotFoundException;
 import com.jitu.lead_management.service.UserService;
 import com.jitu.lead_management.service.VerificationService;
@@ -58,7 +59,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                     user.isActive(),
                     true, true, true, AuthorityUtils.NO_AUTHORITIES);
 
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException | BadCredentialsException e) {
             throw new UsernameNotFoundException(e.getMessage());
         }
     }
