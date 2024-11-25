@@ -16,8 +16,8 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JWTServiceImpl implements JWTService {
     // requirement :
-    private static final long LONG_EXPIRATION_TIME_LIMIT = 30 * 24 * 60 * 60 * 1000;
-    private static final long EXPIRATION_TIME_LIMIT = 15 * 60 * 1000;
+    private static final long LONG_EXPIRATION_TIME_LIMIT = 30L * 24 * 60 * 60 * 1000;
+    private static final long EXPIRATION_TIME_LIMIT = 15L * 60 * 1000;
 
     // for fetching from environment variables
     // private String jwtSecret = System.getenv("JWT_SECRET_KEY");
@@ -37,6 +37,7 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public String generateToken(String reference) {
+        System.out.println(EXPIRATION_TIME_LIMIT);
         // fetch authority/role from user details
         // SimpleGrantedAuthority role = (SimpleGrantedAuthority)
         // user.getAuthorities().toArray()[0];
@@ -52,6 +53,7 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public String generateRefreshToken(String reference) {
+        System.out.println(LONG_EXPIRATION_TIME_LIMIT);
         return Jwts.builder()
                 // .claim("role", role.getAuthority())
                 .subject(reference)
