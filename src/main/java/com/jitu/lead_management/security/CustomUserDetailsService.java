@@ -14,8 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.entity.User;
-import com.jitu.lead_management.exception.BadCredentialsException;
-import com.jitu.lead_management.exception.UserNotFoundException;
 import com.jitu.lead_management.service.UserService;
 import com.jitu.lead_management.service.VerificationService;
 
@@ -31,37 +29,32 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String reference) throws UsernameNotFoundException {
-        try {
-            // Fetch the user
-            User user = userService.get(reference);
+        // Fetch the user
+        User user = userService.get(reference);
 
-            // Check if user is verified
-            verificationService.isUserVerified(user);
-            // Check if user is active
-            user = verificationService.setUserActive(user);
+        // Check if user is verified
+        verificationService.isUserVerified(user);
+        // Check if user is active
+        user = verificationService.setUserActive(user);
 
-            // Fetch User Roles
-            // List<Roles> roles = rolesRepository.findByUserId(user.getUserId());
-            // if (roles == null) {
-            // // throw new BadCredentialsException("Role not found with Reference : " +
-            // reference);
-            // }
-            // List<String> roleNames = new ArrayList<String>();
-            // for (Roles role : roles) {
-            // roleNames.add(role.getRole());
-            // }
+        // Fetch User Roles
+        // List<Roles> roles = rolesRepository.findByUserId(user.getUserId());
+        // if (roles == null) {
+        // // throw new BadCredentialsException("Role not found with Reference : " +
+        // reference);
+        // }
+        // List<String> roleNames = new ArrayList<String>();
+        // for (Roles role : roles) {
+        // roleNames.add(role.getRole());
+        // }
 
-            // Generate Authority List
-            // List<GrantedAuthority> authorities =
-            // AuthorityUtils.createAuthorityList(roleNames.toArray(new String[0]));
+        // Generate Authority List
+        // List<GrantedAuthority> authorities =
+        // AuthorityUtils.createAuthorityList(roleNames.toArray(new String[0]));
 
-            return new org.springframework.security.core.userdetails.User(reference, user.getPassword(),
-                    user.isActive(),
-                    true, true, true, AuthorityUtils.NO_AUTHORITIES);
-
-        } catch (UserNotFoundException | BadCredentialsException e) {
-            throw new UsernameNotFoundException(e.getMessage());
-        }
+        return new org.springframework.security.core.userdetails.User(reference, user.getPassword(),
+                user.isActive(),
+                true, true, true, AuthorityUtils.NO_AUTHORITIES);
     }
 
 }

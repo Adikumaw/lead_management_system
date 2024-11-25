@@ -126,23 +126,22 @@ public class AuthController {
         }
     }
 
-    // @PostMapping("/logout")
-    // public ResponseEntity<String> logout(@RequestHeader("Authorization") String
-    // jwtHeader) {
-    // try {
-    // // extract token from request header
-    // String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-    // String reference = jwtService.fetchReference(jwtToken);
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String jwtHeader) {
+        try {
+            // extract token from request header
+            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
+            String reference = jwtService.fetchReference(jwtToken);
 
-    // authService.logout(reference);
-    // return ResponseEntity.ok("User logged out successfully!");
-    // } catch (LeadManagementException e) {
-    // throw e;
-    // } catch (Exception e) {
-    // logger.error("Unknown error: " + e.getMessage(), e);
-    // throw new UnknownErrorException("Error: unknown error");
-    // }
-    // }
+            authService.logout(reference);
+            return ResponseEntity.ok("User logged out successfully!");
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
 
     @GetMapping("/test")
     public String getMethodName(@RequestParam String param) {

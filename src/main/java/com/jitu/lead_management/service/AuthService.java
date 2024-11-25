@@ -12,6 +12,6 @@ public interface AuthService {
 
     void doAuthenticate(String reference, String password);
 
-    // void logout(String reference);
+    void logout(String reference);
 
 }

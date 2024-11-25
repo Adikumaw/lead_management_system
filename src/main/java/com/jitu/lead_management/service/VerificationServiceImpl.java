@@ -1,7 +1,6 @@
 package com.jitu.lead_management.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.Miscellaneous.Miscellaneous;
@@ -10,6 +9,7 @@ import com.jitu.lead_management.exception.InvalidEmailException;
 import com.jitu.lead_management.exception.InvalidPasswordException;
 import com.jitu.lead_management.exception.UserException;
 import com.jitu.lead_management.exception.UserExistException;
+import com.jitu.lead_management.exception.UserNotVerifiedException;
 import com.jitu.lead_management.model.SignUpModel;
 
 @Service
@@ -20,7 +20,7 @@ public class VerificationServiceImpl implements VerificationService {
     @Override
     public Boolean isUserVerified(User user) {
         if (!user.isVerified()) {
-            throw new BadCredentialsException("Please verify your email to login");
+            throw new UserNotVerifiedException("Please verify your email to login");
         }
         return true;
     }
