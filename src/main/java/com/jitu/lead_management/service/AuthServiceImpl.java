@@ -3,6 +3,7 @@ package com.jitu.lead_management.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
         // Authenticate user
         try {
             doAuthenticate(signInRequest.getReference(), signInRequest.getPassword());
-        } catch (BadCredentialsException e) {
+        } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
             // Do increment login attempts only if password is wrong.
             if (e.getMessage().equals("Please verify your email to login")) {
                 throw new com.jitu.lead_management.exception.BadCredentialsException(e.getMessage());
