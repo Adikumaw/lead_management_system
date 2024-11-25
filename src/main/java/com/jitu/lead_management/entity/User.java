@@ -52,6 +52,9 @@ public class User {
     @Column(name = "login_attempts")
     private int loginAttempts;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
@@ -62,18 +65,34 @@ public class User {
         this.verified = 0;
         this.login = 0;
         this.loginAttempts = 0;
+        this.refreshToken = null;
     }
 
     public User(SignUpModel signUpModel) {
         this.name = signUpModel.getUserName();
         this.email = signUpModel.getEmail();
         this.password = signUpModel.getPassword();
-        this.active = 1;
+        this.active = 0;
         this.createdAt = new Date();
         this.updatedAt = this.createdAt;
         this.verified = 0;
         this.login = 0;
         this.loginAttempts = 0;
+        this.refreshToken = null;
+    }
+
+    public User(int userId, SignUpModel signUpModel) {
+        this.userId = userId;
+        this.name = signUpModel.getUserName();
+        this.email = signUpModel.getEmail();
+        this.password = signUpModel.getPassword();
+        this.active = 0;
+        this.createdAt = new Date();
+        this.updatedAt = this.createdAt;
+        this.verified = 0;
+        this.login = 0;
+        this.loginAttempts = 0;
+        this.refreshToken = null;
     }
 
     public boolean isActive() {
@@ -86,5 +105,9 @@ public class User {
 
     public boolean isVerified() {
         return verified != 0 ? true : false;
+    }
+
+    public void incrementLoginAttempts() {
+        loginAttempts++;
     }
 }

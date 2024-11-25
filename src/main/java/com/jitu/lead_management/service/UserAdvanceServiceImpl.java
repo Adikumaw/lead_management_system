@@ -6,13 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.jitu.lead_management.Miscellaneous.Miscellaneous;
 import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.entity.VerificationToken;
-import com.jitu.lead_management.exception.InvalidEmailException;
-import com.jitu.lead_management.exception.InvalidPasswordException;
-import com.jitu.lead_management.exception.UserException;
-import com.jitu.lead_management.exception.UserExistException;
+import com.jitu.lead_management.exception.UserNotFoundException;
 import com.jitu.lead_management.model.SignUpModel;
 
 @Service
@@ -24,6 +20,8 @@ public class UserAdvanceServiceImpl implements UserAdvanceService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private VerificationTokenService verificationTokenService;
+    @Autowired
+    private VerificationService verificationService;
     // @Autowired
     // private UpdateVerificationTokenService updateVerificationTokenService;
 
@@ -39,24 +37,28 @@ public class UserAdvanceServiceImpl implements UserAdvanceService {
 
     @Override
     public boolean register(SignUpModel signUpModel) {
+        User user = null;
+        try {
+            user = userService.get(signUpModel.getEmail());
+        } catch (UserNotFoundException e) {
+        }
+
         // vrify user details
-        verifyUserDetails(signUpModel);
+        verificationService.verifyUserDetails(signUpModel, user);
 
         // encrypt password
         String encryptedPassword;
         encryptedPassword = passwordEncoder.encode(signUpModel.getPassword());
         signUpModel.setPassword(encryptedPassword);
 
-        User user = new User(signUpModel);
-
         // fetch the old user id if it exists
-        if (userService.existsByEmailAndNotVerified(signUpModel.getEmail())) {
-            int userId = userService.findUserIdByEmail(signUpModel.getEmail());
-            user.setUserId(userId);
+        if (user != null) {
+            user = new User(user.getUserId(), signUpModel);
+        } else {
+            user = new User(signUpModel);
         }
 
-        // create new user from user model
-        user.setActive(0);
+        // save new user
         user = userService.save(user);
 
         // Generate Verification Token
@@ -313,32 +315,5 @@ public class UserAdvanceServiceImpl implements UserAdvanceService {
     // ----------------------------------------------------------------
     // helper methods
     // ----------------------------------------------------------------
-
-    public void verifyUserDetails(SignUpModel signUpModel) {
-        String name = signUpModel.getUserName();
-        String email = signUpModel.getEmail();
-        String password = signUpModel.getPassword();
-
-        // checking user name
-        if (name == null || name == "") {
-            throw new UserException("Error: Invalid user name");
-        }
-
-        // checking user email
-        if (email == null || email == "") {
-            throw new InvalidEmailException("Error: Empty email address Error");
-        } else if (!Miscellaneous.isValidEmail(email)) {
-            throw new InvalidEmailException("Error: Invalid email Address");
-        } else if (userService.existsByEmailAndVerified(email)) {
-            throw new UserExistException("Warning: Email already exists, try login !!!");
-        }
-
-        // checking user password
-        if (password == null || password.isEmpty()) {
-            throw new InvalidPasswordException("Error: Invalid password Error");
-        } else if (!Miscellaneous.isStrongPassword(password)) {
-            throw new InvalidPasswordException("Error: Weak password Error");
-        }
-    }
 
 }

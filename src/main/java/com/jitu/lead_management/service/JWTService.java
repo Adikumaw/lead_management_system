@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 public interface JWTService {
     String generateToken(String reference);
 
+    String generateRefreshToken(String reference);
+
     String fetchReference(String token);
 
     Date fetchExpirationDate(String token);

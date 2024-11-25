@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.UnknownErrorException;
 import com.jitu.lead_management.model.JwtResponse;
+import com.jitu.lead_management.model.RefreshTokenModel;
 import com.jitu.lead_management.model.SignInModel;
+import com.jitu.lead_management.model.SignInResponse;
 import com.jitu.lead_management.model.SignUpModel;
 import com.jitu.lead_management.service.AuthService;
+import com.jitu.lead_management.service.JWTService;
 import com.jitu.lead_management.service.UserAdvanceService;
 import com.jitu.lead_management.service.VerificationTokenService;
 
@@ -31,13 +34,28 @@ public class AuthController {
     private VerificationTokenService verificationTokenService;
     @Autowired
     private AuthService authService;
+    @Autowired
+    JWTService jwtService;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtResponse> signIn(@RequestBody SignInModel signInRequest) {
+    public ResponseEntity<SignInResponse> signIn(@RequestBody SignInModel signInRequest) {
         try {
-            JwtResponse response = authService.authenticateAndGenerateToken(signInRequest);
+            SignInResponse response = authService.authenticateAndGenerateTokens(signInRequest);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
+    @PostMapping("refresh-token")
+    public ResponseEntity<JwtResponse> refreshToken(@RequestBody RefreshTokenModel refreshToken) {
+        try {
+            JwtResponse response = authService.authenticateAndRefreshToken(refreshToken);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (LeadManagementException e) {
             throw e;
@@ -106,6 +124,24 @@ public class AuthController {
             throw new UnknownErrorException("Error: unknown error");
         }
     }
+
+    // @PostMapping("/logout")
+    // public ResponseEntity<String> logout(@RequestHeader("Authorization") String
+    // jwtHeader) {
+    // try {
+    // // extract token from request header
+    // String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
+    // String reference = jwtService.fetchReference(jwtToken);
+
+    // authService.logout(reference);
+    // return ResponseEntity.ok("User logged out successfully!");
+    // } catch (LeadManagementException e) {
+    // throw e;
+    // } catch (Exception e) {
+    // logger.error("Unknown error: " + e.getMessage(), e);
+    // throw new UnknownErrorException("Error: unknown error");
+    // }
+    // }
 
     @GetMapping("/test")
     public String getMethodName(@RequestParam String param) {

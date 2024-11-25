@@ -51,17 +51,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean existsByEmailAndVerified(String email) {
-        return userRepository.existsByEmailAndVerified(email, 1);
+    public Boolean existsByEmailAndRefreshToken(String email, String refreshToken) {
+        return userRepository.existsByEmailAndRefreshToken(email, refreshToken);
     }
 
-    @Override
-    public Boolean existsByUserIdAndVerified(int userId) {
-        return userRepository.existsByUserIdAndVerified(userId, 1);
-    }
+    // @Override
+    // public Boolean existsByUserIdAndVerified(int userId) {
+    // return userRepository.existsByUserIdAndVerified(userId, 1);
+    // }
 
-    @Override
-    public Boolean existsByEmailAndNotVerified(String email) {
-        return userRepository.existsByEmailAndVerified(email, 0);
-    }
+    // @Override
+    // public Boolean existsByEmailAndNotVerified(String email) {
+    // return userRepository.existsByEmailAndVerified(email, 0);
+    // }
 }

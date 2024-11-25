@@ -6,34 +6,68 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.jitu.lead_management.entity.User;
+import com.jitu.lead_management.exception.UnableToLoginException;
+import com.jitu.lead_management.exception.UnableToRefreshTokenException;
 import com.jitu.lead_management.model.JwtResponse;
+import com.jitu.lead_management.model.RefreshTokenModel;
 import com.jitu.lead_management.model.SignInModel;
+import com.jitu.lead_management.model.SignInResponse;
 
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    private final int MAX_LOGIN_ATTEMPTS = 5;
     @Autowired
     private JWTService jwtService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    private UserService userService;
 
     @Override
-    public JwtResponse authenticateAndGenerateToken(SignInModel signInRequest) {
+    public SignInResponse authenticateAndGenerateTokens(SignInModel signInRequest) {
         // Authenticate user
-        doAuthenticate(signInRequest.getReference(), signInRequest.getPassword());
-
-        // Load user details
-        // Removing loadUserbyUsername cause user is already authenticated...
-        // UserDetails userDetails =
-        // customUserDetailsService.loadUserByUsername(signInRequest.getReference());
-
+        try {
+            doAuthenticate(signInRequest.getReference(), signInRequest.getPassword());
+        } catch (BadCredentialsException e) {
+            // Do increment login attempts only if password is wrong.
+            throw new com.jitu.lead_management.exception.BadCredentialsException(
+                    "Error: Invalid Username or Password !!");
+        }
         // Generate JWT token
         String token = jwtService.generateToken(signInRequest.getReference());
+        String refreshToken = jwtService.generateRefreshToken(signInRequest.getReference());
+
+        manageLogin(signInRequest.getReference(), refreshToken);
+
+        // Build and return response
+        return SignInResponse.builder()
+                .refreshToken(refreshToken)
+                .jwtToken(token)
+                .reference(signInRequest.getReference())
+                .build();
+    }
+
+    @Override
+    public JwtResponse authenticateAndRefreshToken(RefreshTokenModel refreshToken) {
+        String reference = jwtService.fetchReference(refreshToken.getRefreshToken());
+        // Validate and fetch user details
+        Boolean isExpired = jwtService.isTokenExpired(refreshToken.getRefreshToken());
+
+        if (userService.existsByEmailAndRefreshToken(reference, refreshToken.getRefreshToken())) {
+            throw new UnableToRefreshTokenException("Error: Invalid Refresh Token");
+        }
+        if (isExpired) {
+            throw new UnableToRefreshTokenException("Error: Token expired try Sign-In");
+        }
+
+        // Generate new JWT token
+        String token = jwtService.generateToken(reference);
 
         // Build and return response
         return JwtResponse.builder()
                 .jwtToken(token)
-                .reference(signInRequest.getReference())
                 .build();
     }
 
@@ -41,11 +75,25 @@ public class AuthServiceImpl implements AuthService {
     public void doAuthenticate(String reference, String password) {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(reference,
                 password);
-        try {
-            authenticationManager.authenticate(authentication);
-        } catch (BadCredentialsException e) {
-            throw new com.jitu.lead_management.exception.BadCredentialsException(
-                    "Error: Invalid Username or Password !!");
+
+        authenticationManager.authenticate(authentication);
+    }
+
+    // @Override
+    // public void logout(String reference) {
+    // if (!userService.userLogout(reference)) {
+    // throw new UnableToLogoutException("User not logged out!!!");
+    // }
+    // }
+
+    private void manageLogin(String reference, String refreshToken) {
+        User user = userService.get(reference);
+        user.setRefreshToken(refreshToken);
+        user.setLogin(1);
+        user = userService.save(user);
+        if (user == null) {
+            throw new UnableToLoginException("User not Signed-in!!!");
         }
     }
+
 }
