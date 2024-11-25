@@ -53,8 +53,9 @@ public class AuthController {
     }
 
     @PostMapping("refresh-token")
-    public ResponseEntity<JwtResponse> refreshToken(@RequestHeader("Authorization") String refreshToken) {
+    public ResponseEntity<JwtResponse> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) {
         try {
+            String refreshToken = jwtService.resolveJwtHeader(refreshTokenHeader);
             JwtResponse response = authService.authenticateAndRefreshToken(refreshToken);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (LeadManagementException e) {
