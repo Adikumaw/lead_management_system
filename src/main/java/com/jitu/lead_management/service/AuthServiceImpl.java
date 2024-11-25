@@ -17,7 +17,7 @@ import com.jitu.lead_management.model.SignInResponse;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    private final int MAX_LOGIN_ATTEMPTS = 5;
+    // private final int MAX_LOGIN_ATTEMPTS = 5;
     @Autowired
     private JWTService jwtService;
     @Autowired
@@ -57,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
     public JwtResponse authenticateAndRefreshToken(String refreshToken) {
         String reference = jwtService.fetchReference(refreshToken);
         // Validate and fetch user details
-        Boolean isExpired = jwtService.isTokenExpired(refreshToken);
+        // Boolean isExpired = jwtService.isTokenExpired(refreshToken);
 
         if (!userService.existsByEmailAndRefreshToken(reference, refreshToken)) {
             throw new UnableToRefreshTokenException("Error: Invalid Refresh Token");
@@ -83,12 +83,16 @@ public class AuthServiceImpl implements AuthService {
         authenticationManager.authenticate(authentication);
     }
 
-    // @Override
-    // public void logout(String reference) {
-    // if (!userService.userLogout(reference)) {
-    // throw new UnableToLogoutException("User not logged out!!!");
-    // }
-    // }
+    @Override
+    public void logout(String reference) {
+        User user = userService.get(reference);
+        user.setRefreshToken(null);
+        user.setLogin(0);
+        user = userService.save(user);
+        if (user == null) {
+            throw new UnableToLoginException("Unable to sign-in! Please try again.");
+        }
+    }
 
     private void manageLogin(String reference, String refreshToken) {
         User user = userService.get(reference);
