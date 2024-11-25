@@ -31,11 +31,11 @@ public class AuthServiceImpl implements AuthService {
             doAuthenticate(signInRequest.getReference(), signInRequest.getPassword());
         } catch (BadCredentialsException e) {
             // Do increment login attempts only if password is wrong.
-            if (e.getMessage().startsWith("User not verified with Reference:")) {
+            if (e.getMessage().equals("Please verify your email to login")) {
                 throw new com.jitu.lead_management.exception.BadCredentialsException(e.getMessage());
             } else {
                 throw new com.jitu.lead_management.exception.BadCredentialsException(
-                        "Error: Invalid Username or Password !!");
+                        "Invalid E-mail or Password");
             }
         }
         // Generate JWT token
@@ -61,9 +61,9 @@ public class AuthServiceImpl implements AuthService {
         if (!userService.existsByEmailAndRefreshToken(reference, refreshToken)) {
             throw new UnableToRefreshTokenException("Error: Invalid Refresh Token");
         }
-        if (isExpired) {
-            throw new UnableToRefreshTokenException("Error: Token expired try Sign-In");
-        }
+        // if (isExpired) {
+        // throw new UnableToRefreshTokenException("Error: Token expired try Sign-In");
+        // }
 
         // Generate new JWT token
         String token = jwtService.generateToken(reference);
@@ -95,7 +95,7 @@ public class AuthServiceImpl implements AuthService {
         user.setLogin(1);
         user = userService.save(user);
         if (user == null) {
-            throw new UnableToLoginException("User not Signed-in!!!");
+            throw new UnableToLoginException("Unable to sign-in! Please try again.");
         }
     }
 

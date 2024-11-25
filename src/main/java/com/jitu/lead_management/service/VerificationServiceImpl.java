@@ -20,7 +20,7 @@ public class VerificationServiceImpl implements VerificationService {
     @Override
     public Boolean isUserVerified(User user) {
         if (!user.isVerified()) {
-            throw new BadCredentialsException("User not verified with Reference: " + user.getEmail());
+            throw new BadCredentialsException("Please verify your email to login");
         }
         return true;
     }
@@ -52,7 +52,7 @@ public class VerificationServiceImpl implements VerificationService {
         } else if (!Miscellaneous.isValidEmail(email)) {
             throw new InvalidEmailException("Error: Invalid email Address");
         } else if (existsByEmailAndVerified(user)) {
-            throw new UserExistException("Warning: Email already exists, try login !!!");
+            throw new UserExistException("Email already exists, try login !!!");
         }
 
         // checking user password
