@@ -20,7 +20,7 @@ public class VerificationServiceImpl implements VerificationService {
     @Override
     public Boolean isUserVerified(User user) {
         if (!user.isVerified()) {
-            throw new BadCredentialsException("User not verified with Reference : " + user.getEmail());
+            throw new BadCredentialsException("User not verified with Reference: " + user.getEmail());
         }
         return true;
     }
