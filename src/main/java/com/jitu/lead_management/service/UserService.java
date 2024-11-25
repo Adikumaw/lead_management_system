@@ -20,9 +20,9 @@ public interface UserService {
 
     boolean isVerified(int userId);
 
-    Boolean existsByEmailAndVerified(String email);
+    // Boolean existsByUserIdAndVerified(int userId);
 
-    Boolean existsByUserIdAndVerified(int userId);
+    // Boolean existsByEmailAndNotVerified(String email);
 
-    Boolean existsByEmailAndNotVerified(String email);
+    Boolean existsByEmailAndRefreshToken(String email, String refreshToken);
 }
