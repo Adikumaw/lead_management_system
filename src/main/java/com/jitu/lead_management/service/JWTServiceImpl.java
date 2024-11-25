@@ -37,7 +37,6 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public String generateToken(String reference) {
-        System.out.println(EXPIRATION_TIME_LIMIT);
         // fetch authority/role from user details
         // SimpleGrantedAuthority role = (SimpleGrantedAuthority)
         // user.getAuthorities().toArray()[0];
@@ -53,7 +52,6 @@ public class JWTServiceImpl implements JWTService {
 
     @Override
     public String generateRefreshToken(String reference) {
-        System.out.println(LONG_EXPIRATION_TIME_LIMIT);
         return Jwts.builder()
                 // .claim("role", role.getAuthority())
                 .subject(reference)
