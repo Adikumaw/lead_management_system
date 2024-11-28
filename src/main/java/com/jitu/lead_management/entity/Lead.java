@@ -2,7 +2,7 @@ package com.jitu.lead_management.entity;
 
 import java.util.Date;
 
-import com.jitu.lead_management.model.CreateLeadModel;
+import com.jitu.lead_management.model.LeadModificationModel;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -72,7 +72,7 @@ public class Lead {
     @Column(name = "updated_at")
     private Date updatedAt;
 
-    public Lead(int userId, CreateLeadModel lead) {
+    public Lead(int userId, LeadModificationModel lead) {
         this.userId = userId;
         this.stage = lead.getStage();
         this.clientName = lead.getClientName();

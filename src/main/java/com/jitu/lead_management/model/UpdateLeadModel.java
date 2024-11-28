@@ -4,13 +4,12 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 import lombok.Data;
 
 @Data
 public class UpdateLeadModel {
-    @JsonProperty("lead_id")
-    private String leadId;
     private String stage;
     @JsonProperty("client_name")
     private String clientName;
@@ -28,15 +27,26 @@ public class UpdateLeadModel {
     @JsonProperty("package_name")
     private String packageName;
     @JsonProperty("planned_travel_date")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Kolkata")
     private Date plannedTravelDate;
     private String destination;
     @JsonProperty("no_of_adults")
-    private int noOfAdults;
+    private Integer noOfAdults;
     @JsonProperty("budget_per_adult")
     private Double budgetPerAdult;
     @JsonProperty("no_of_children")
-    private int noOfChildren;
+    private Integer noOfChildren;
     @JsonProperty("budget_per_child")
     private Double budgetPerChild;
+
+    @JsonSetter("")
+    public void setNoOfChildren(Integer noOfChildren) {
+        this.noOfChildren = noOfChildren == null ? 0 : noOfChildren;
+    }
+
+    @JsonSetter("")
+    public void setNoOfAdults(Integer noOfAdults) {
+        this.noOfAdults = noOfAdults == null ? 0 : noOfAdults;
+    }
+
 }
