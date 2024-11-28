@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.entity.Lead;
 import com.jitu.lead_management.exception.LeadNotFoundException;
-import com.jitu.lead_management.model.CreateLeadModel;
+import com.jitu.lead_management.model.LeadModificationModel;
 import com.jitu.lead_management.model.LeadViewModel;
 import com.jitu.lead_management.repository.LeadRepository;
 import com.jitu.lead_management.utils.LeadUtils;
@@ -24,7 +24,7 @@ public class LeadServiceImpl implements LeadService {
     private LeadRepository leadRepository;
 
     @Override
-    public void createLead(String reference, CreateLeadModel requestLead) {
+    public void createLead(String reference, LeadModificationModel requestLead) {
         int userId = userService.findUserIdByEmail(reference);
 
         Lead lead = new Lead(userId, requestLead);
@@ -57,6 +57,23 @@ public class LeadServiceImpl implements LeadService {
         }
 
         throw new LeadNotFoundException("Error: Lead not found");
+    }
+
+    @Override
+    public void updateLead(String reference, String leadId, LeadModificationModel requestLead) {
+        int userId = userService.findUserIdByEmail(reference);
+
+        int intLeadId = LeadUtils.resolveLeadId(leadId);
+
+        Optional<Lead> optionalLead = leadRepository.findByLeadIdAndUserId(intLeadId, userId);
+
+        if (optionalLead.isPresent()) {
+            Lead lead = LeadUtils.mapLeadUpdate(optionalLead.get(), requestLead);
+
+            leadRepository.save(lead);
+        } else {
+            throw new LeadNotFoundException("Error: Lead not found");
+        }
     }
 
     @Override

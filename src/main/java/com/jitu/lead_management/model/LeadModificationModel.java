@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Data;
 
 @Data
-public class CreateLeadModel {
+public class LeadModificationModel {
     private String stage;
     @JsonProperty("client_name")
     private String clientName;
