@@ -7,15 +7,19 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.entity.User;
+import com.jitu.lead_management.entity.VerificationToken;
 import com.jitu.lead_management.exception.TooManyLoginAttemptsException;
 import com.jitu.lead_management.exception.UnableToLoginException;
 import com.jitu.lead_management.exception.UnableToRefreshTokenException;
+import com.jitu.lead_management.exception.UserNotFoundException;
 import com.jitu.lead_management.model.JwtResponse;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
+import com.jitu.lead_management.model.SignUpModel;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -28,6 +32,64 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserService userService;
+    @Autowired
+    private VerificationTokenService verificationTokenService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private VerificationService verificationService;
+
+    @Override
+    public void register(SignUpModel signUpModel) {
+        User user = null;
+        try {
+            user = userService.get(signUpModel.getEmail());
+        } catch (UserNotFoundException e) {
+        }
+
+        // vrify user details
+        verificationService.verifyUserDetails(signUpModel, user);
+
+        // encrypt password
+        String encryptedPassword;
+        encryptedPassword = passwordEncoder.encode(signUpModel.getPassword());
+        signUpModel.setPassword(encryptedPassword);
+
+        // fetch the old user id if it exists
+        if (user != null) {
+            user = new User(user.getUserId(), signUpModel);
+        } else {
+            user = new User(signUpModel);
+        }
+
+        // save new user
+        user = userService.save(user);
+
+        // Generate Verification Token
+        VerificationToken verificationToken = verificationTokenService.generate(user.getUserId());
+        // send verification email
+        verificationTokenService.sender(user, verificationToken);
+    }
+
+    @Override
+    public boolean verify(String token) {
+        // fetch token from Database
+        VerificationToken verificationToken = verificationTokenService.findByToken(token);
+
+        // check if token exist and not expired
+        if (verificationTokenService.verify(verificationToken)) {
+            // fetch and set user active
+            int userId = verificationToken.getUserId();
+            User user = userService.get(userId);
+            user.setActive(1);
+            user.setVerified(1);
+            userService.save(user);
+            // Delete verification token
+            verificationTokenService.delete(verificationToken);
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public SignInResponse authenticateAndGenerateTokens(SignInModel signInRequest) {
@@ -91,14 +153,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void doAuthenticate(String reference, String password) {
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(reference,
-                password);
-
-        authenticationManager.authenticate(authentication);
-    }
-
-    @Override
     public void logout(String reference) {
         User user = userService.get(reference);
         user.setRefreshToken(null);
@@ -107,6 +161,16 @@ public class AuthServiceImpl implements AuthService {
         if (user == null) {
             throw new UnableToLoginException("Unable to sign-in! Please try again.");
         }
+    }
+
+    // =================================================================
+    // HELPER FUNCTIONS
+    // =================================================================
+    public void doAuthenticate(String reference, String password) {
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(reference,
+                password);
+
+        authenticationManager.authenticate(authentication);
     }
 
     private void manageLogin(String reference, String refreshToken) {

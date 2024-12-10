@@ -1,27 +1,18 @@
 package com.jitu.lead_management.service;
 
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.jitu.lead_management.entity.User;
-import com.jitu.lead_management.entity.VerificationToken;
-import com.jitu.lead_management.exception.UserNotFoundException;
-import com.jitu.lead_management.model.SignUpModel;
 
 @Service
 public class UserAdvanceServiceImpl implements UserAdvanceService {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private VerificationTokenService verificationTokenService;
-    @Autowired
-    private VerificationService verificationService;
+    // @Autowired
+    // private UserService userService;
+    // @Autowired
+    // private PasswordEncoder passwordEncoder;
+    // @Autowired
+    // private VerificationTokenService verificationTokenService;
+    // @Autowired
+    // private VerificationService verificationService;
     // @Autowired
     // private UpdateVerificationTokenService updateVerificationTokenService;
 
@@ -34,60 +25,6 @@ public class UserAdvanceServiceImpl implements UserAdvanceService {
     // ----------------------------------------------------------------
     // service methods for user
     // ----------------------------------------------------------------
-
-    @Override
-    public boolean register(SignUpModel signUpModel) {
-        User user = null;
-        try {
-            user = userService.get(signUpModel.getEmail());
-        } catch (UserNotFoundException e) {
-        }
-
-        // vrify user details
-        verificationService.verifyUserDetails(signUpModel, user);
-
-        // encrypt password
-        String encryptedPassword;
-        encryptedPassword = passwordEncoder.encode(signUpModel.getPassword());
-        signUpModel.setPassword(encryptedPassword);
-
-        // fetch the old user id if it exists
-        if (user != null) {
-            user = new User(user.getUserId(), signUpModel);
-        } else {
-            user = new User(signUpModel);
-        }
-
-        // save new user
-        user = userService.save(user);
-
-        // Generate Verification Token
-        VerificationToken verificationToken = verificationTokenService.generate(user.getUserId());
-        // send verification email
-        verificationTokenService.sender(user, verificationToken);
-
-        return (user != null) ? true : false;
-    }
-
-    @Override
-    public boolean verify(String token) {
-        // fetch token from Database
-        VerificationToken verificationToken = verificationTokenService.findByToken(token);
-
-        // check if token exist and not expired
-        if (verificationTokenService.verify(verificationToken)) {
-            // fetch and set user active
-            int userId = verificationToken.getUserId();
-            User user = userService.get(userId);
-            user.setActive(1);
-            user.setVerified(1);
-            userService.save(user);
-            // Delete verification token
-            verificationTokenService.delete(verificationToken);
-            return true;
-        }
-        return false;
-    }
 
     // @Override
     // public boolean verifyUpdate(String token) {
