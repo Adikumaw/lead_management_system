@@ -33,9 +33,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userService.get(reference);
 
         // Check if user is verified
-        verificationService.isUserVerified(user);
+        verificationService.checkUserVerified(user);
         // Check if user is active
         user = verificationService.setUserActive(user);
+        // Check if user login attempts are allowed
+        verificationService.checkUserLoginAllowed(user);
+
+        // Check if user login attempts are allowed
+        // if (user.getLoginAttempts() >= MAX_LOGIN_ATTEMPTS) {
 
         // Fetch User Roles
         // List<Roles> roles = rolesRepository.findByUserId(user.getUserId());

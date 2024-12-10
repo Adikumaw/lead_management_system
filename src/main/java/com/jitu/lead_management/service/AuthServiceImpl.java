@@ -1,5 +1,7 @@
 package com.jitu.lead_management.service;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -8,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.entity.User;
+import com.jitu.lead_management.exception.TooManyLoginAttemptsException;
 import com.jitu.lead_management.exception.UnableToLoginException;
 import com.jitu.lead_management.exception.UnableToRefreshTokenException;
 import com.jitu.lead_management.model.JwtResponse;
@@ -17,7 +20,8 @@ import com.jitu.lead_management.model.SignInResponse;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    // private final int MAX_LOGIN_ATTEMPTS = 5;
+    private final int MAX_LOGIN_ATTEMPTS = 5;
+    private static final long LOCK_EXPIRATION_TIME = 24L * 60 * 60 * 1000; // 24 hours in milliseconds
     @Autowired
     private JWTService jwtService;
     @Autowired
@@ -31,10 +35,21 @@ public class AuthServiceImpl implements AuthService {
         try {
             doAuthenticate(signInRequest.getReference(), signInRequest.getPassword());
         } catch (InternalAuthenticationServiceException | BadCredentialsException e) {
-            // Do increment login attempts only if password is wrong.
+            // Allow not Verified Exception to pass through
             if (e.getMessage().equals("Please verify your email to login")) {
                 throw new com.jitu.lead_management.exception.BadCredentialsException(e.getMessage());
-            } else {
+            }
+            // Allow Too many login attempts exception to pass through
+            else if (e.getMessage().startsWith("too many login attempts")) {
+                throw new com.jitu.lead_management.exception.BadCredentialsException(e.getMessage());
+            }
+            // Check for manage login attempt and throw custom bad credentials exception
+            else {
+                // Check if password is wrong then manage login attempt
+                if (e.getClass() == BadCredentialsException.class) {
+                    manageLoginAttempts(signInRequest.getReference());
+                }
+                // finaly throw the exception
                 throw new com.jitu.lead_management.exception.BadCredentialsException(
                         "Invalid E-mail or Password");
             }
@@ -98,10 +113,42 @@ public class AuthServiceImpl implements AuthService {
         User user = userService.get(reference);
         user.setRefreshToken(refreshToken);
         user.setLogin(1);
+        // clear locks and attemps
+        user.setLoginAttempts(0);
+        user.setLockExpirationTime(null);
+        // save user to database
         user = userService.save(user);
         if (user == null) {
             throw new UnableToLoginException("Unable to sign-in! Please try again.");
         }
+    }
+
+    private void manageLoginAttempts(String reference) {
+        User user = userService.get(reference);
+        // check if lockExpirationTime is available or not.
+        if (user.getLockExpirationTime() != null) {
+            // when lock is expired
+            if (user.getLockExpirationTime().before(new Date())) {
+                user.setLoginAttempts(0);
+                user.setLockExpirationTime(null);
+            }
+            // when lock is not expired and max login attempts is reached
+            else if (user.getLoginAttempts() >= MAX_LOGIN_ATTEMPTS) {
+                long lockExpirationTimeLeft = user.getLockExpirationTime().getTime() - new Date().getTime();
+                long totalSeconds = lockExpirationTimeLeft / 1000; // Convert milliseconds to seconds
+                long hours = totalSeconds / 3600; // Calculate hours
+                long minutes = (totalSeconds % 3600) / 60;
+
+                throw new TooManyLoginAttemptsException("too many login attempts, try after "
+                        + hours + " hours and " + minutes + " minutes");
+            }
+        }
+
+        // increment login attempts and lock account for 24 hours
+        user.incrementLoginAttempts();
+        user.setLockExpirationTime(new Date(new Date().getTime() + LOCK_EXPIRATION_TIME));
+        // save user to database
+        user = userService.save(user);
     }
 
 }
