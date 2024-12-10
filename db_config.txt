@@ -5,7 +5,19 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     active TINYINT(1) DEFAULT 1,  -- 1 for active, 0 for inactive
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    verified TINYINT(1) NOT NULL DEFAULT 0,
+    login TINYINT(1) NOT NULL DEFAULT 0,
+    login_attempts TINYINT(1) NOT NULL DEFAULT 0,
+    lock_expiration_time DATETIME,
+    refresh_token VARCHAR(255)
+);
+
+CREATE TABLE verification_token (
+    user_id INT primary key,  -- Foreign key linking to the users table
+    token varchar(255) not null,
+    expiry_date DATETIME not null,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE  -- Cascade delete leads when user is deleted
 );
 
 CREATE TABLE leads (
@@ -27,10 +39,31 @@ CREATE TABLE leads (
     destination VARCHAR(100),
     no_of_adults INT DEFAULT 0,
     budget_per_adult DECIMAL(10,2) DEFAULT 0.00,
-    number_of_children INT DEFAULT 0,
+    no_of_children INT DEFAULT 0,
     budget_per_children DECIMAL(10,2) DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE  -- Cascade delete leads when user is deleted
+);
+
+create table itenary(
+    itenary_id int auto_increment primary key,
+    user_id INT,
+    client_name VARCHAR(100) NOT NULL,
+    client_contact_no VARCHAR(15) NOT NULL,
+    client_email_id VARCHAR(100),
+    executive VARCHAR(100) NOT NULL,
+    destination VARCHAR(100),
+    currency varchar(3) not null,
+    subject varchar(70) not null,
+    trip_details text not null,
+    no_of_adults INT DEFAULT 0,
+    cost_per_adult DECIMAL(10,2) DEFAULT 0.00,
+    no_of_children INT DEFAULT 0,
+    cost_per_children DECIMAL(10,2) DEFAULT 0.00,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    valid_up_to TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
