@@ -55,6 +55,26 @@ public class EmailTemplate {
                         Thanks,
                         %s Team
                         """;
+        // input feilds (
+        // user.getName(),
+        // resetRequestLink,
+        // EXPIRATION,
+        // applicationName
+        // )
+        public static final String PASSWORD_RESET_REQUEST_TEMPLATE = """
+                        Hi %S,
+
+                        You requested to reset your password for your account. Click the link below to set a new password:
+
+                        %s
+
+                        This link will expire in %d hour for your security.
+
+                        If you didn’t request a password reset, please ignore this email or contact our support team.
+
+                        Thanks,
+                        %s Team
+                        """;
 
         // Format input feilds (
         // order id,
