@@ -20,6 +20,12 @@ CREATE TABLE verification_token (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE  -- Cascade delete leads when user is deleted
 );
 
+create table reset_request( 
+    user_id int primary key,  -- Foreign key linking to the users table
+    token varchar(1024) not null, 
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE  -- Cascade delete leads when user is deleted
+    );
+
 CREATE TABLE leads (
     lead_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,  -- Foreign key linking to the users table
@@ -46,8 +52,8 @@ CREATE TABLE leads (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE  -- Cascade delete leads when user is deleted
 );
 
-create table itenary(
-    itenary_id int auto_increment primary key,
+create table quotation(
+    quotation_id int auto_increment primary key,
     user_id INT,
     client_name VARCHAR(100) NOT NULL,
     client_contact_no VARCHAR(15) NOT NULL,
@@ -57,6 +63,8 @@ create table itenary(
     currency varchar(3) not null,
     subject varchar(70) not null,
     trip_details text not null,
+    notes text,
+    terms_and_conditions text,
     no_of_adults INT DEFAULT 0,
     cost_per_adult DECIMAL(10,2) DEFAULT 0.00,
     no_of_children INT DEFAULT 0,
