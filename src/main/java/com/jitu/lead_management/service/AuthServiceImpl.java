@@ -12,11 +12,13 @@ import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.entity.VerificationToken;
+import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.TooManyLoginAttemptsException;
 import com.jitu.lead_management.exception.UnableToLoginException;
 import com.jitu.lead_management.exception.UnableToRefreshTokenException;
 import com.jitu.lead_management.exception.UserNotFoundException;
 import com.jitu.lead_management.model.JwtResponse;
+import com.jitu.lead_management.model.ResetRequestModel;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
 import com.jitu.lead_management.model.SignUpModel;
@@ -35,9 +37,14 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private VerificationTokenService verificationTokenService;
     @Autowired
+    private ResetRequestService resetRequestService;
+    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private VerificationService verificationService;
+
+    // @Autowired
+    // private UpdateVerificationTokenService updateVerificationTokenService;
 
     @Override
     public void register(SignUpModel signUpModel) {
@@ -45,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             user = userService.get(signUpModel.getEmail());
         } catch (UserNotFoundException e) {
+            // Do nothing...
         }
 
         // vrify user details
@@ -160,6 +168,27 @@ public class AuthServiceImpl implements AuthService {
         user = userService.save(user);
         if (user == null) {
             throw new UnableToLoginException("Unable to sign-in! Please try again.");
+        }
+    }
+
+    @Override
+    public void requestReset(ResetRequestModel resetRequest) {
+        try {
+            // fetch the user information
+            User user = userService.get(resetRequest.getEmail());
+            // check if user is verified
+            verificationService.checkUserVerified(user);
+
+            // Generate reset request token
+            String token = jwtService.generateResetRequestToken(user.getEmail());
+
+            // save token to db
+            resetRequestService.save(user.getUserId(), token);
+
+            // Send reset request email
+            resetRequestService.sendResetRequestLink(user, token);
+        } catch (LeadManagementException e) {
+            // Do nothing...
         }
     }
 

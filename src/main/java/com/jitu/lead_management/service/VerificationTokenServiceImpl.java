@@ -49,7 +49,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         String token = verificationToken.getToken();
         String verificationTemplate = EmailTemplate.EMAIL_VERIFICATION_TEMPLATE;
         String formatedMessage = String.format(verificationTemplate, user.getName(), applicationName,
-                verificationLink + token, verificationLink + token, EXPIRATION, applicationName,
+                verificationLink + token, EXPIRATION, applicationName,
                 applicationName);
 
         try {
@@ -65,7 +65,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         String token = verificationToken.getToken();
         String verificationTemplate = EmailTemplate.EMAIL_VERIFICATION_TEMPLATE;
         String formatedMessage = String.format(verificationTemplate, user.getName(), applicationName,
-                verificationLink + token, verificationLink + token, EXPIRATION, applicationName,
+                verificationLink + token, EXPIRATION, applicationName,
                 applicationName);
 
         try {

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.UnknownErrorException;
 import com.jitu.lead_management.model.JwtResponse;
+import com.jitu.lead_management.model.ResetRequestModel;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
 import com.jitu.lead_management.model.SignUpModel;
@@ -106,12 +107,12 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody String email) {
+    @PostMapping("/request-reset")
+    public ResponseEntity<String> requestReset(@RequestBody ResetRequestModel resetRequest) {
         try {
-            verificationTokenService.sender(email);
+            authService.requestReset(resetRequest);
 
-            return ResponseEntity.status(HttpStatus.OK).body("Success");
+            return ResponseEntity.status(HttpStatus.OK).body("If the email exists, a reset link has been sent.");
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
