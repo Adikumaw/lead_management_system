@@ -4,7 +4,9 @@ import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.model.SignUpModel;
 
 public interface VerificationService {
-    Boolean isUserVerified(User user);
+    void checkUserVerified(User user);
+
+    void checkUserLoginAllowed(User user);
 
     User setUserActive(User user);
 

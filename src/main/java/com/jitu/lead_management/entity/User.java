@@ -52,6 +52,9 @@ public class User {
     @Column(name = "login_attempts")
     private int loginAttempts;
 
+    @Column(name = "lock_expiration_time")
+    private Date lockExpirationTime;
+
     @Column(name = "refresh_token")
     private String refreshToken;
 
@@ -66,6 +69,7 @@ public class User {
         this.login = 0;
         this.loginAttempts = 0;
         this.refreshToken = null;
+        this.lockExpirationTime = null;
     }
 
     public User(SignUpModel signUpModel) {
@@ -79,6 +83,7 @@ public class User {
         this.login = 0;
         this.loginAttempts = 0;
         this.refreshToken = null;
+        this.lockExpirationTime = null;
     }
 
     public User(int userId, SignUpModel signUpModel) {
@@ -93,6 +98,7 @@ public class User {
         this.login = 0;
         this.loginAttempts = 0;
         this.refreshToken = null;
+        this.lockExpirationTime = null;
     }
 
     public boolean isActive() {

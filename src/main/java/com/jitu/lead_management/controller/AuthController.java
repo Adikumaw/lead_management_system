@@ -16,20 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.UnknownErrorException;
 import com.jitu.lead_management.model.JwtResponse;
+import com.jitu.lead_management.model.PasswordUpdateModel;
+import com.jitu.lead_management.model.ResetRequestModel;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
 import com.jitu.lead_management.model.SignUpModel;
 import com.jitu.lead_management.service.AuthService;
 import com.jitu.lead_management.service.JWTService;
-import com.jitu.lead_management.service.UserAdvanceService;
 import com.jitu.lead_management.service.VerificationTokenService;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private UserAdvanceService userAdvanceService;
     @Autowired
     private VerificationTokenService verificationTokenService;
     @Autowired
@@ -69,11 +68,8 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<String> register(@RequestBody SignUpModel signUpModel) {
         try {
-            if (userAdvanceService.register(signUpModel)) {
-                return ResponseEntity.status(HttpStatus.OK).body("Success");
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to register");
-            }
+            authService.register(signUpModel);
+            return ResponseEntity.status(HttpStatus.OK).body("Success");
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
@@ -99,7 +95,7 @@ public class AuthController {
     @GetMapping("/verify-user")
     public ResponseEntity<String> verify(@RequestParam String token) {
         try {
-            if (userAdvanceService.verify(token)) {
+            if (authService.verify(token)) {
                 return ResponseEntity.ok("Email verified successfully!");
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token");
@@ -112,12 +108,28 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@RequestBody String email) {
+    @PostMapping("/request-reset")
+    public ResponseEntity<String> requestReset(@RequestBody ResetRequestModel resetRequest) {
         try {
-            verificationTokenService.sender(email);
+            authService.requestReset(resetRequest);
 
-            return ResponseEntity.status(HttpStatus.OK).body("Success");
+            return ResponseEntity.status(HttpStatus.OK).body("If the email exists, a reset link has been sent.");
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<String> resetPassword(@RequestBody PasswordUpdateModel passwordUpdateModel,
+            @RequestHeader("Authorization") String jwtHeader) {
+        try {
+            String reference = jwtService.resolveReference(jwtHeader);
+            authService.updatePassword(reference, passwordUpdateModel);
+
+            return ResponseEntity.status(HttpStatus.OK).body("A verifation link has been sent to your email.");
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {

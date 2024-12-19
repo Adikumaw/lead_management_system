@@ -9,6 +9,10 @@ public interface JWTService {
 
     String generateRefreshToken(String reference);
 
+    String generateResetRequestToken(String reference);
+
+    String generateUpdatePasswordToken(String reference);
+
     String fetchReference(String token);
 
     Date fetchExpirationDate(String token);
@@ -18,4 +22,6 @@ public interface JWTService {
     Boolean validateToken(String token, UserDetails user);
 
     String resolveJwtHeader(String header);
+
+    String resolveReference(String header);
 }

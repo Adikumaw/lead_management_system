@@ -5,110 +5,112 @@ import lombok.Data;
 @Data
 public class EmailTemplate {
 
-    // Input fields (
-    // user Name,
-    // application Name,
-    // verificationLink,
-    // verificationLink,
-    // EXPIRATION,
-    // application Name,
-    // application Name
-    // )
-    public static final String EMAIL_VERIFICATION_TEMPLATE = """
-            Hi %s,
-            Thanks for signing up for %s!
-            To complete your registration and access all the features, please verify your email address.
+        // Input fields (
+        // user Name,
+        // application Name,
+        // verificationLink,
+        // verificationLink,
+        // EXPIRATION,
+        // application Name,
+        // application Name
+        // )
+        public static final String EMAIL_VERIFICATION_TEMPLATE = """
+                        Hi %s,
+                        Thanks for signing up for %s!
+                        To complete your registration and access all the features, please verify your email address.
 
-            Click the button below to verify your email:
-            [Verify Email Button](%s)
+                        Click the below link to complete your registration. If you can't click the button, copy and paste the following link into your web browser:
 
-            OR
+                        %s
 
-            If you can't click the button, copy and paste the following link into your web browser:
-            %s
+                        This link will expire in %d hours.\s
 
-            This link will expire in %d hours.\s
+                        Why Verify Your Email?
+                        Verifying your email address helps us keep your account secure and ensures you receive important updates from %s.
 
-            Why Verify Your Email?
-            Verifying your email address helps us keep your account secure and ensures you receive important updates from %s.
+                        Having Trouble?
+                        If you're having trouble verifying your email address, please contact us at this email.
 
-            Having Trouble?
-            If you're having trouble verifying your email address, please contact us at this email.
+                        Thanks,
+                        The %s Team\
+                        """;
 
-            Thanks,
-            The %s Team\
-            """;
+        // input feilds (
+        // user.getName(),
+        // verificationLink,
+        // EXPIRATION,
+        // applicationName
+        // )
+        public static final String PASSWORD_UPDATE_VERIFICATION_TEMPLATE = """
+                        Hi %s,
 
-    // input feilds (
-    // verificationTemplate,
-    // user.getName(),
-    // applicationName,
-    // Data which is updated,
-    // verificationLink,
-    // verificationLink,
-    // EXPIRATION,
-    // applicationName,
-    // applicationName
-    // )
-    public static final String EMAIL_UPDATE_VERIFICATION_TEMPLATE = """
-            Hi %s,
-            You recently updated your details on %s. To ensure the accuracy of your information and the security of your account, please verify these changes.
+                        We received a request to change your account password. To proceed, click the link below:
 
-            Updated Details:
-            %s
+                        %s
 
-            Click the button below to confirm your updated details:
-            [Verify Details Button](%s)
+                        This link will expire in %d hour.
 
-            OR
+                        If you didn’t request this change, please ignore this email.
 
-            If you can't click the button, copy and paste the following link into your web browser:
-            %s
+                        Thanks,
+                        %s Team
+                        """;
+        // input feilds (
+        // user.getName(),
+        // resetRequestLink,
+        // EXPIRATION,
+        // applicationName
+        // )
+        public static final String PASSWORD_RESET_REQUEST_TEMPLATE = """
+                        Hi %S,
 
-            This link will expire in %d hours.\s
+                        You requested to reset your password for your account. Click the link below to set a new password:
 
-            Didn't Make These Changes?
-            If you did not request these updates, please contact us immediately at %s to secure your account.
+                        %s
 
-            Thanks,
-            The %s Team\
-            """;
+                        This link will expire in %d hour for your security.
 
-    // Format input feilds (
-    // order id,
-    // user name,
-    // company name,
-    // order date,
-    // total amount,
-    // order status,
-    // shipping address,
-    // product details list as pre formated string,
-    // order trackiing link,
-    // company name
-    // )
-    public static final String EMAIL_ORDER_TEMPLATE = """
-            Subject: Order Confirmation - Order #%d,
+                        If you didn’t request a password reset, please ignore this email or contact our support team.
 
-            Dear %s,
+                        Thanks,
+                        %s Team
+                        """;
 
-            Thank you for your order! This email confirms your purchase with %s.
-            Order Summary
+        // Format input feilds (
+        // order id,
+        // user name,
+        // company name,
+        // order date,
+        // total amount,
+        // order status,
+        // shipping address,
+        // product details list as pre formated string,
+        // order trackiing link,
+        // company name
+        // )
+        public static final String EMAIL_ORDER_TEMPLATE = """
+                        Subject: Order Confirmation - Order #%d,
 
-                Order Date: %s
-                Total Amount: %.2f
-                Order Status: %s
-                Shipping Address: %s
+                        Dear %s,
 
-            Order Details
-            %s
+                        Thank you for your order! This email confirms your purchase with %s.
+                        Order Summary
 
-            You can track your order status at %s.
+                            Order Date: %s
+                            Total Amount: %.2f
+                            Order Status: %s
+                            Shipping Address: %s
 
-            If you have any questions or require assistance, please contact our customer support.
+                        Order Details
+                        %s
 
-            Thank you for shopping with us!
+                        You can track your order status at %s.
 
-            Sincerely,
-            %s
-            """;
+                        If you have any questions or require assistance, please contact our customer support.
+
+                        Thank you for shopping with us!
+
+                        Sincerely,
+                        %s
+                        """;
 }

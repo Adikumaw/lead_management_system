@@ -1,15 +1,9 @@
 package com.jitu.lead_management.service;
 
-import com.jitu.lead_management.model.SignUpModel;
-
 public interface UserAdvanceService {
     // ----------------------------------------------------------------
     // RestApi methods for user
     // ----------------------------------------------------------------
-
-    boolean register(SignUpModel signInModel);
-
-    boolean verify(String token);
 
     // boolean verifyUpdate(String token);
 
