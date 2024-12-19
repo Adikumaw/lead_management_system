@@ -11,6 +11,8 @@ public interface JWTService {
 
     String generateResetRequestToken(String reference);
 
+    String generateUpdatePasswordToken(String reference);
+
     String fetchReference(String token);
 
     Date fetchExpirationDate(String token);

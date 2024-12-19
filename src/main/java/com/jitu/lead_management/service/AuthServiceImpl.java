@@ -10,14 +10,17 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.jitu.lead_management.Miscellaneous.Miscellaneous;
 import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.entity.VerificationToken;
+import com.jitu.lead_management.exception.InvalidPasswordException;
 import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.TooManyLoginAttemptsException;
 import com.jitu.lead_management.exception.UnableToLoginException;
 import com.jitu.lead_management.exception.UnableToRefreshTokenException;
 import com.jitu.lead_management.exception.UserNotFoundException;
 import com.jitu.lead_management.model.JwtResponse;
+import com.jitu.lead_management.model.PasswordUpdateModel;
 import com.jitu.lead_management.model.ResetRequestModel;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
@@ -42,9 +45,8 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private VerificationService verificationService;
-
-    // @Autowired
-    // private UpdateVerificationTokenService updateVerificationTokenService;
+    @Autowired
+    private UpdateVerificationTokenService updateVerificationTokenService;
 
     @Override
     public void register(SignUpModel signUpModel) {
@@ -190,6 +192,24 @@ public class AuthServiceImpl implements AuthService {
         } catch (LeadManagementException e) {
             // Do nothing...
         }
+    }
+
+    @Override
+    public void updatePassword(String reference, PasswordUpdateModel passwordUpdateModel) {
+        User user = userService.get(reference);
+        // check if password is correct
+        if (!passwordEncoder.matches(passwordUpdateModel.getOldPassword(), user.getPassword())) {
+            throw new com.jitu.lead_management.exception.BadCredentialsException("Old Password is incorrect");
+        }
+        // check if the new password is strong enough
+        if (!Miscellaneous.isStrongPassword(passwordUpdateModel.getNewPassword())) {
+            throw new InvalidPasswordException("Error: Weak password Error");
+        }
+        // encrypt new password
+        String encryptedPassword = passwordEncoder.encode(passwordUpdateModel.getNewPassword());
+        user.setPassword(encryptedPassword);
+        // save user to database and send verification email
+        updateVerificationTokenService.generateAndSendPasswordUpdateVerification(user, encryptedPassword);
     }
 
     // =================================================================

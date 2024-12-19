@@ -18,7 +18,7 @@ public class JWTServiceImpl implements JWTService {
     // requirement :
     private static final long LONG_EXPIRATION_TIME_LIMIT = 30L * 24 * 60 * 60 * 1000;
     private static final long EXPIRATION_TIME_LIMIT = 15L * 60 * 1000;
-    private static final long RESET_REQUEST_EXPIRATION_TIME_LIMIT = 1L * 60 * 60 * 1000;
+    private static final long ONE_HOUR_EXPIRATION_TIME_LIMIT = 1L * 60 * 60 * 1000;
 
     // for fetching from environment variables
     // private String jwtSecret = System.getenv("JWT_SECRET_KEY");
@@ -66,7 +66,16 @@ public class JWTServiceImpl implements JWTService {
         return Jwts.builder()
                 .subject(reference)
                 .issuedAt(new Date())
-                .expiration(new Date((new Date()).getTime() + RESET_REQUEST_EXPIRATION_TIME_LIMIT))
+                .expiration(new Date((new Date()).getTime() + ONE_HOUR_EXPIRATION_TIME_LIMIT))
+                .signWith(key)
+                .compact();
+    }
+
+    public String generateUpdatePasswordToken(String reference) {
+        return Jwts.builder()
+                .subject(reference)
+                .issuedAt(new Date())
+                .expiration(new Date((new Date()).getTime() + ONE_HOUR_EXPIRATION_TIME_LIMIT))
                 .signWith(key)
                 .compact();
     }

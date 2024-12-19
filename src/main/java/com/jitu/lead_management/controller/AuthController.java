@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.UnknownErrorException;
 import com.jitu.lead_management.model.JwtResponse;
+import com.jitu.lead_management.model.PasswordUpdateModel;
 import com.jitu.lead_management.model.ResetRequestModel;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
@@ -113,6 +114,22 @@ public class AuthController {
             authService.requestReset(resetRequest);
 
             return ResponseEntity.status(HttpStatus.OK).body("If the email exists, a reset link has been sent.");
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
+    @PostMapping("/update-password")
+    public ResponseEntity<String> resetPassword(@RequestBody PasswordUpdateModel passwordUpdateModel,
+            @RequestHeader("Authorization") String jwtHeader) {
+        try {
+            String reference = jwtService.resolveReference(jwtHeader);
+            authService.updatePassword(reference, passwordUpdateModel);
+
+            return ResponseEntity.status(HttpStatus.OK).body("A verifation link has been sent to your email.");
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
