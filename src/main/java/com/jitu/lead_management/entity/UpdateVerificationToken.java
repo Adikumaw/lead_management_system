@@ -1,7 +1,5 @@
 package com.jitu.lead_management.entity;
 
-import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,7 +12,6 @@ import lombok.Data;
 @Entity
 @Table(name = "update_verification_token")
 public class UpdateVerificationToken {
-    private static final Long EXPIRATION = 60L * 60 * 1000; // time in milliseconds
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -25,18 +22,11 @@ public class UpdateVerificationToken {
     private String data;
     @Column(name = "token")
     private String token;
-    @Column(name = "expiry_date")
-    private Date expiry;
 
     public UpdateVerificationToken(int userId, String data, String token) {
         this.userId = userId;
         this.data = data;
         this.token = token;
-        this.expiry = calculateExpiryDate(EXPIRATION);
-    }
-
-    private Date calculateExpiryDate(Long expiryTimeInMilliseconds) {
-        return new Date(new Date().getTime() + expiryTimeInMilliseconds);
     }
 
 }
