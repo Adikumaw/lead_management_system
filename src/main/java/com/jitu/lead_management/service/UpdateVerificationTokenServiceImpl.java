@@ -67,8 +67,6 @@ public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTok
             updateVerificationToken.setToken(token);
         }
 
-        updateVerificationToken = new UpdateVerificationToken(userId, data, token);
-
         updateVerificationTokenRepository.save(updateVerificationToken);
     }
 

@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/verify-user").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/signup/resend-token").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/request-reset").permitAll()
                 // .requestMatchers(HttpMethod.GET, "/api/leads/create").permitAll()
                 // .requestMatchers(HttpMethod.GET, "/api/auth/test").
                 .anyRequest().authenticated());

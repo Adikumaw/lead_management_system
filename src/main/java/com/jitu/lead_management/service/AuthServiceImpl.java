@@ -207,7 +207,6 @@ public class AuthServiceImpl implements AuthService {
         }
         // encrypt new password
         String encryptedPassword = passwordEncoder.encode(passwordUpdateModel.getNewPassword());
-        user.setPassword(encryptedPassword);
         // save user to database and send verification email
         updateVerificationTokenService.generateAndSendPasswordUpdateVerification(user, encryptedPassword);
     }
