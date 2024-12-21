@@ -252,7 +252,8 @@ public class AuthServiceImpl implements AuthService {
             throw e;
         } catch (Exception e) {
             // Log and handle unexpected exceptions
-            logger.error("Unexpected error during password update verification", e);
+            // logger.error("Unexpected error during password update verification", e);
+            logger.error("Unexpected error during password update verification, " + e.getClass() + e.getMessage());
             throw new UpdateVerificationFailedException("Verification failed, try again");
         }
     }

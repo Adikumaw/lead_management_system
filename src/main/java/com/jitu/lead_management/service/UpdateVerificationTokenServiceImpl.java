@@ -15,7 +15,7 @@ import com.jitu.lead_management.repository.UpdateVerificationTokenRepository;
 @Service
 public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTokenService {
 
-    private String updatePasswordLink = "http://localhost:8080/auth/verify-password-update?token=";
+    private String updatePasswordLink = "http://localhost:8080/api/auth/verify-password-update?token=";
     private String applicationName = "Lead Management";
     private String emailSubjectUpdatePassword = "Confirm Your Password Change Request";
     private int expiration = 1;
@@ -117,7 +117,7 @@ public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTok
         }
         int indexOfColon = data.indexOf(":");
         if (indexOfColon >= 0) {
-            return data.substring(indexOfColon);
+            return data.substring(indexOfColon + 1);
         }
         throw new InvalidUpdateVerificationTokenDataException("Invalid data format: " + data);
     }
