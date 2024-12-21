@@ -39,9 +39,7 @@ public class LeadController {
     public ResponseEntity<String> create(@RequestBody LeadModificationModel lead,
             @RequestHeader("Authorization") String jwtHeader) {
         try {
-            // extract token from request header
-            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-            String reference = jwtService.fetchReference(jwtToken);
+            String reference = jwtService.resolveReference(jwtHeader);
 
             leadService.createLead(reference, lead);
 
@@ -57,9 +55,7 @@ public class LeadController {
     @GetMapping("fetch")
     public List<LeadViewModel> getLeads(@RequestHeader("Authorization") String jwtHeader) {
         try {
-            // extract token from request header
-            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-            String reference = jwtService.fetchReference(jwtToken);
+            String reference = jwtService.resolveReference(jwtHeader);
 
             return leadService.getLeads(reference);
         } catch (LeadManagementException e) {
@@ -74,9 +70,7 @@ public class LeadController {
     public LeadViewModel getLeadById(@RequestParam String leadId,
             @RequestHeader("Authorization") String jwtHeader) {
         try {
-            // extract token from request header
-            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-            String reference = jwtService.fetchReference(jwtToken);
+            String reference = jwtService.resolveReference(jwtHeader);
 
             return leadService.getLeadById(leadId, reference);
         } catch (LeadManagementException e) {
@@ -92,9 +86,7 @@ public class LeadController {
             @RequestBody LeadModificationModel lead,
             @RequestHeader("Authorization") String jwtHeader) {
         try {
-            // extract token from request header
-            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-            String reference = jwtService.fetchReference(jwtToken);
+            String reference = jwtService.resolveReference(jwtHeader);
 
             leadService.updateLead(reference, leadId, lead);
 
@@ -111,9 +103,7 @@ public class LeadController {
     public List<LeadViewModel> deleteLeadsByIds(@RequestParam List<String> leadIds,
             @RequestHeader("Authorization") String jwtHeader) {
         try {
-            // extract token from request header
-            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-            String reference = jwtService.fetchReference(jwtToken);
+            String reference = jwtService.resolveReference(jwtHeader);
 
             return leadService.deleteLeadsByIds(leadIds, reference);
         } catch (LeadManagementException e) {
@@ -127,9 +117,7 @@ public class LeadController {
     @DeleteMapping("delete-all")
     public List<LeadViewModel> deleteAllLeads(@RequestHeader("Authorization") String jwtHeader) {
         try {
-            // extract token from request header
-            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-            String reference = jwtService.fetchReference(jwtToken);
+            String reference = jwtService.resolveReference(jwtHeader);
 
             return leadService.deleteAllLeads(reference);
         } catch (LeadManagementException e) {
@@ -144,9 +132,7 @@ public class LeadController {
     public List<LeadViewModel> deleteByLeadId(@RequestParam String leadId,
             @RequestHeader("Authorization") String jwtHeader) {
         try {
-            // extract token from request header
-            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-            String reference = jwtService.fetchReference(jwtToken);
+            String reference = jwtService.resolveReference(jwtHeader);
 
             return leadService.deleteByLeadId(leadId, reference);
         } catch (LeadManagementException e) {

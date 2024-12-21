@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "reset_request")
-public class ResetRequest {
+public class ResetPasswordRequest {
     @Id
     @Column(name = "user_id")
     private int userId;

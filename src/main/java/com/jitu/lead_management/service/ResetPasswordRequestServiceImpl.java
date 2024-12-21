@@ -6,26 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.Miscellaneous.EmailTemplate;
-import com.jitu.lead_management.entity.ResetRequest;
+import com.jitu.lead_management.entity.ResetPasswordRequest;
 import com.jitu.lead_management.entity.User;
-import com.jitu.lead_management.repository.ResetRequestRepository;
+import com.jitu.lead_management.repository.ResetPasswordRequestRepository;
 
 @Service
-public class ResetRequestServiceImpl implements ResetRequestService {
-    private String resetRequestLink = "http://localhost:3000/reset-password/";
+public class ResetPasswordRequestServiceImpl implements ResetPasswordRequestService {
+    private String resetRequestLink = "http://localhost:3000/reset-password/confirm/";
     private String applicationName = "Lead Management";
     private String emailSubject = "Reset Your Password";
     private int expiration = 1;
 
     @Autowired
-    private ResetRequestRepository resetRequestRepository;
+    private ResetPasswordRequestRepository resetPasswordRequestRepository;
     @Autowired
     private EmailService emailService;
 
-    private static final Logger logger = LoggerFactory.getLogger(ResetRequestService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResetPasswordRequestService.class);
 
     @Override
-    public void sendResetRequestLink(User user, String token) {
+    public void sendResetPasswordConfirmLink(User user, String token) {
         String email = user.getEmail();
         String verificationTemplate = EmailTemplate.PASSWORD_RESET_REQUEST_TEMPLATE;
         String formatedMessage = String.format(verificationTemplate, user.getName(),
@@ -40,9 +40,19 @@ public class ResetRequestServiceImpl implements ResetRequestService {
     }
 
     @Override
+    public ResetPasswordRequest findByUserId(int userId) {
+        return resetPasswordRequestRepository.findById(userId).orElse(null);
+    }
+
+    @Override
     public void save(int userId, String token) {
-        ResetRequest resetRequest = new ResetRequest(userId, token);
-        resetRequestRepository.save(resetRequest);
+        ResetPasswordRequest resetRequest = new ResetPasswordRequest(userId, token);
+        resetPasswordRequestRepository.save(resetRequest);
+    }
+
+    @Override
+    public void delete(ResetPasswordRequest resetPasswordRequest) {
+        resetPasswordRequestRepository.delete(resetPasswordRequest);
     }
 
 }

@@ -1,8 +1,6 @@
 package com.jitu.lead_management.service;
 
-import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.jitu.lead_management.Miscellaneous.EmailTemplate;
 import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.entity.VerificationToken;
-import com.jitu.lead_management.exception.InvalidTokenException;
 import com.jitu.lead_management.exception.VerificationTokenNotFoundException;
 import com.jitu.lead_management.repository.VerificationTokenRepository;
 
@@ -29,6 +26,8 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     private VerificationTokenRepository verificationTokenRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private JWTService jwtService;
 
     private static final Logger logger = LoggerFactory.getLogger(VerificationTokenServiceImpl.class);
 
@@ -76,14 +75,8 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     }
 
     @Override
-    public VerificationToken findByToken(String token) {
-        // fetch token from Database
-        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
-
-        if (verificationToken.isPresent()) {
-            return verificationToken.get();
-        }
-        throw new InvalidTokenException("Error: Invalid token " + token);
+    public VerificationToken findByUserId(int userId) {
+        return verificationTokenRepository.findById(userId).orElse(null);
     }
 
     @Override
@@ -97,31 +90,11 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     }
 
     @Override
-    public boolean verify(String token) {
-        // fetch token from Database
-        VerificationToken verificationToken = findByToken(token);
-        // check if token exist and not expired
-        if (verificationToken != null && verificationToken.getExpiryDate().after(new Date())) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean verify(VerificationToken token) {
-        // check if token exist and not expired
-        if (token != null && token.getExpiryDate().after(new Date())) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public VerificationToken generate(int userId) {
+    public VerificationToken generate(int userId, String reference) {
         // Generate Verification Token
-        String token = UUID.randomUUID().toString();
+        String token = jwtService.generateVerificationToken(reference);
 
-        VerificationToken verificationToken = new VerificationToken(token, userId);
+        VerificationToken verificationToken = new VerificationToken(userId, token);
 
         return save(verificationToken);
     }

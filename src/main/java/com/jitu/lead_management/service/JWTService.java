@@ -9,7 +9,9 @@ public interface JWTService {
 
     String generateRefreshToken(String reference);
 
-    String generateResetRequestToken(String reference);
+    String generateVerificationToken(String reference);
+
+    String generateResetPasswordRequestToken(String reference);
 
     String generateUpdatePasswordToken(String reference);
 

@@ -17,7 +17,8 @@ import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.UnknownErrorException;
 import com.jitu.lead_management.model.JwtResponse;
 import com.jitu.lead_management.model.PasswordUpdateModel;
-import com.jitu.lead_management.model.ResetRequestModel;
+import com.jitu.lead_management.model.ResetPasswordConfirmModel;
+import com.jitu.lead_management.model.ResetPasswordRequestModel;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
 import com.jitu.lead_management.model.SignUpModel;
@@ -95,11 +96,9 @@ public class AuthController {
     @GetMapping("/verify-user")
     public ResponseEntity<String> verify(@RequestParam String token) {
         try {
-            if (authService.verify(token)) {
-                return ResponseEntity.ok("Email verified successfully!");
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token");
-            }
+            authService.verify(token);
+
+            return ResponseEntity.ok("Email verified successfully!");
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
@@ -108,12 +107,27 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/request-reset")
-    public ResponseEntity<String> requestReset(@RequestBody ResetRequestModel resetRequest) {
+    @PostMapping("/reset-password/request")
+    public ResponseEntity<String> resetPasswordRequest(@RequestBody ResetPasswordRequestModel resetPasswordRequest) {
         try {
-            authService.requestReset(resetRequest);
+            authService.resetPasswordRequest(resetPasswordRequest);
 
             return ResponseEntity.status(HttpStatus.OK).body("If the email exists, a reset link has been sent.");
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
+    @PostMapping("/reset-password/confirm")
+    public ResponseEntity<String> resetPasswordConfirm(@RequestBody ResetPasswordConfirmModel resetPasswordConfirm,
+            @RequestParam String token) {
+        try {
+            authService.resetPasswordConfirm(resetPasswordConfirm, token);
+
+            return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
@@ -154,9 +168,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String jwtHeader) {
         try {
-            // extract token from request header
-            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-            String reference = jwtService.fetchReference(jwtToken);
+            String reference = jwtService.resolveReference(jwtHeader);
 
             authService.logout(reference);
             return ResponseEntity.ok("User logged out successfully!");
