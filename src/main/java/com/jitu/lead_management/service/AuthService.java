@@ -18,7 +18,7 @@ public interface AuthService {
 
     void logout(String reference);
 
-    void requestReset(ResetRequestModel resetRequest);
+    void resetPasswordRequest(ResetRequestModel resetRequest);
 
     void updatePassword(String reference, PasswordUpdateModel passwordUpdateModel);
 

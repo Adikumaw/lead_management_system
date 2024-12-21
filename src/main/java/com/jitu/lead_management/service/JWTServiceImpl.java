@@ -62,7 +62,7 @@ public class JWTServiceImpl implements JWTService {
                 .compact();
     }
 
-    public String generateResetRequestToken(String reference) {
+    public String generateResetPasswordRequestToken(String reference) {
         return Jwts.builder()
                 .subject(reference)
                 .issuedAt(new Date())

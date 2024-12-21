@@ -108,10 +108,10 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/request-reset")
-    public ResponseEntity<String> requestReset(@RequestBody ResetRequestModel resetRequest) {
+    @PostMapping("/reset-password/request")
+    public ResponseEntity<String> resetPasswordRequest(@RequestBody ResetRequestModel resetRequest) {
         try {
-            authService.requestReset(resetRequest);
+            authService.resetPasswordRequest(resetRequest);
 
             return ResponseEntity.status(HttpStatus.OK).body("If the email exists, a reset link has been sent.");
         } catch (LeadManagementException e) {

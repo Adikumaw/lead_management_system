@@ -183,7 +183,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void requestReset(ResetRequestModel resetRequest) {
+    public void resetPasswordRequest(ResetRequestModel resetRequest) {
         try {
             // fetch the user information
             User user = userService.get(resetRequest.getEmail());
@@ -191,13 +191,13 @@ public class AuthServiceImpl implements AuthService {
             verificationService.checkUserVerified(user);
 
             // Generate reset request token
-            String token = jwtService.generateResetRequestToken(user.getEmail());
+            String token = jwtService.generateResetPasswordRequestToken(user.getEmail());
 
             // save token to db
             resetRequestService.save(user.getUserId(), token);
 
             // Send reset request email
-            resetRequestService.sendResetRequestLink(user, token);
+            resetRequestService.sendResetPasswordConfirmLink(user, token);
         } catch (LeadManagementException e) {
             // Do nothing...
         }

@@ -12,7 +12,7 @@ import com.jitu.lead_management.repository.ResetRequestRepository;
 
 @Service
 public class ResetRequestServiceImpl implements ResetRequestService {
-    private String resetRequestLink = "http://localhost:3000/reset-password/";
+    private String resetRequestLink = "http://localhost:3000/reset-password/confirm/";
     private String applicationName = "Lead Management";
     private String emailSubject = "Reset Your Password";
     private int expiration = 1;
@@ -25,7 +25,7 @@ public class ResetRequestServiceImpl implements ResetRequestService {
     private static final Logger logger = LoggerFactory.getLogger(ResetRequestService.class);
 
     @Override
-    public void sendResetRequestLink(User user, String token) {
+    public void sendResetPasswordConfirmLink(User user, String token) {
         String email = user.getEmail();
         String verificationTemplate = EmailTemplate.PASSWORD_RESET_REQUEST_TEMPLATE;
         String formatedMessage = String.format(verificationTemplate, user.getName(),
