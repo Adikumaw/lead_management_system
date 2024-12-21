@@ -25,7 +25,6 @@ import com.jitu.lead_management.exception.ResetPasswordConfirmFailed;
 import com.jitu.lead_management.exception.ResetPasswordConfirmTokenExpiredException;
 import com.jitu.lead_management.exception.ResetPasswordRequestNotFoundException;
 import com.jitu.lead_management.exception.TooManyLoginAttemptsException;
-import com.jitu.lead_management.exception.UnableToLoginException;
 import com.jitu.lead_management.exception.UnableToRefreshTokenException;
 import com.jitu.lead_management.exception.UpdateVerificationFailedException;
 import com.jitu.lead_management.exception.UpdateVerificationTokenExpiredException;
@@ -182,10 +181,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userService.get(reference);
         user.setRefreshToken(null);
         user.setLogin(0);
-        user = userService.save(user);
-        if (user == null) {
-            throw new UnableToLoginException("Unable to sign-in! Please try again.");
-        }
+        userService.save(user);
     }
 
     @Override
@@ -230,12 +226,12 @@ public class AuthServiceImpl implements AuthService {
             if (!token.equals(resetPasswordRequest.getToken())) {
                 throw new InvalidResetPasswordConfirmTokenException("Invalid token: " + token);
             }
-            // update user password and delete token
+            // update user password, logout and delete token
             String encryptedPassword = passwordEncoder.encode(resetPasswordConfirmModel.getPassword());
-            user.setPassword(encryptedPassword);
-            user = userService.save(user);
+            savePasswordAndLogout(user, encryptedPassword);
             // delete reset password request
             resetPasswordRequestService.delete(resetPasswordRequest);
+
         } catch (ResetPasswordConfirmTokenExpiredException | ResetPasswordRequestNotFoundException e) {
             throw e;
         } catch (Exception e) {
@@ -284,11 +280,9 @@ public class AuthServiceImpl implements AuthService {
             if (!token.equals(updateVerificationToken.getToken())) {
                 throw new InvalidUpdateVerificationTokenException("token mismatch");
             }
-            // Step 5: Update password securely
+            // Step 5: Update password securely and logout
             String newPassword = updateVerificationTokenService.resolveData(updateVerificationToken.getData());
-            user.setPassword(newPassword);
-            userService.save(user);
-
+            savePasswordAndLogout(user, newPassword);
             // Step 6: Clean up the token
             updateVerificationTokenService.delete(updateVerificationToken);
 
@@ -321,10 +315,7 @@ public class AuthServiceImpl implements AuthService {
         user.setLoginAttempts(0);
         user.setLockExpirationTime(null);
         // save user to database
-        user = userService.save(user);
-        if (user == null) {
-            throw new UnableToLoginException("Unable to sign-in! Please try again.");
-        }
+        userService.save(user);
     }
 
     private void manageLoginAttempts(String reference) {
@@ -352,7 +343,14 @@ public class AuthServiceImpl implements AuthService {
         user.incrementLoginAttempts();
         user.setLockExpirationTime(new Date(new Date().getTime() + LOCK_EXPIRATION_TIME));
         // save user to database
-        user = userService.save(user);
+        userService.save(user);
+    }
+
+    private void savePasswordAndLogout(User user, String password) {
+        user.setPassword(password);
+        user.setRefreshToken(null);
+        user.setLogin(0);
+        userService.save(user);
     }
 
 }
