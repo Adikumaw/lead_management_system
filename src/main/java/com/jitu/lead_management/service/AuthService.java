@@ -22,4 +22,6 @@ public interface AuthService {
 
     void updatePassword(String reference, PasswordUpdateModel passwordUpdateModel);
 
+    void verifyPasswordUpdate(String token);
+
 }

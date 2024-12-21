@@ -8,8 +8,6 @@ public interface UpdateVerificationTokenService {
     public static final Integer PASSWORD = 1;
     public static final Integer EMAIL = 2;
 
-    // UpdateVerificationToken findByToken(String token);
-
     // UpdateVerificationToken findByData(String data);
 
     // UpdateVerificationToken save(UpdateVerificationToken token);
@@ -35,9 +33,13 @@ public interface UpdateVerificationTokenService {
 
     UpdateVerificationToken findByUserIdAndPrefix(int userId, int prefix);
 
+    String resolveData(String data);
+
     String setPrefix(String data, int prefix);
 
     String getPrefix(String data);
+
+    void delete(UpdateVerificationToken updateVerificationToken);
 
     // String getPrefix(String data);
 

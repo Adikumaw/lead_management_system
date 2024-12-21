@@ -9,12 +9,13 @@ import com.jitu.lead_management.Miscellaneous.EmailTemplate;
 import com.jitu.lead_management.entity.UpdateVerificationToken;
 import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.exception.InvalidPrefixException;
+import com.jitu.lead_management.exception.InvalidUpdateVerificationTokenDataException;
 import com.jitu.lead_management.repository.UpdateVerificationTokenRepository;
 
 @Service
 public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTokenService {
 
-    private String updatePasswordLink = "http://localhost:8080/auth/verify-password-update?token=";
+    private String updatePasswordLink = "http://localhost:8080/api/auth/verify-password-update?token=";
     private String applicationName = "Lead Management";
     private String emailSubjectUpdatePassword = "Confirm Your Password Change Request";
     private int expiration = 1;
@@ -67,9 +68,12 @@ public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTok
             updateVerificationToken.setToken(token);
         }
 
-        updateVerificationToken = new UpdateVerificationToken(userId, data, token);
-
         updateVerificationTokenRepository.save(updateVerificationToken);
+    }
+
+    @Override
+    public void delete(UpdateVerificationToken updateVerificationToken) {
+        updateVerificationTokenRepository.delete(updateVerificationToken);
     }
 
     @Override
@@ -93,7 +97,7 @@ public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTok
             return ""; // Return empty string for null or empty input
         }
         int indexOfColon = data.indexOf(":");
-        return indexOfColon > 0 ? data.substring(0, indexOfColon) : data;
+        return indexOfColon > 0 ? data.substring(0, indexOfColon) : "";
     }
 
     @Override
@@ -104,6 +108,18 @@ public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTok
             return "email:" + data;
         }
         throw new InvalidPrefixException("Invalid prefix: " + prefix);
+    }
+
+    @Override
+    public String resolveData(String data) {
+        if (data == null || data.isEmpty()) {
+            throw new InvalidUpdateVerificationTokenDataException("Input data cannot be null or empty.");
+        }
+        int indexOfColon = data.indexOf(":");
+        if (indexOfColon >= 0) {
+            return data.substring(indexOfColon + 1);
+        }
+        throw new InvalidUpdateVerificationTokenDataException("Invalid data format: " + data);
     }
 
 }
