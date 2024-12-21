@@ -154,9 +154,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String jwtHeader) {
         try {
-            // extract token from request header
-            String jwtToken = jwtService.resolveJwtHeader(jwtHeader);
-            String reference = jwtService.fetchReference(jwtToken);
+            String reference = jwtService.resolveReference(jwtHeader);
 
             authService.logout(reference);
             return ResponseEntity.ok("User logged out successfully!");
