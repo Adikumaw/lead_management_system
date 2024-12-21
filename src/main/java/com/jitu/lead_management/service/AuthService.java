@@ -11,7 +11,7 @@ import com.jitu.lead_management.model.SignUpModel;
 public interface AuthService {
     public void register(SignUpModel signUpModel);
 
-    boolean verify(String token);
+    void verify(String token);
 
     SignInResponse authenticateAndGenerateTokens(SignInModel signInRequest);
 

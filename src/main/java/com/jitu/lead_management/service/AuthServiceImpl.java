@@ -20,6 +20,7 @@ import com.jitu.lead_management.entity.VerificationToken;
 import com.jitu.lead_management.exception.InvalidPasswordException;
 import com.jitu.lead_management.exception.InvalidResetPasswordConfirmTokenException;
 import com.jitu.lead_management.exception.InvalidUpdateVerificationTokenException;
+import com.jitu.lead_management.exception.InvalidVerificationTokenException;
 import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.ResetPasswordConfirmFailed;
 import com.jitu.lead_management.exception.ResetPasswordConfirmTokenExpiredException;
@@ -30,6 +31,9 @@ import com.jitu.lead_management.exception.UpdateVerificationFailedException;
 import com.jitu.lead_management.exception.UpdateVerificationTokenExpiredException;
 import com.jitu.lead_management.exception.UpdateVerificationTokenNotFoundException;
 import com.jitu.lead_management.exception.UserNotFoundException;
+import com.jitu.lead_management.exception.VerificationFailedException;
+import com.jitu.lead_management.exception.VerificationTokenExpiredException;
+import com.jitu.lead_management.exception.VerificationTokenNotFoundException;
 import com.jitu.lead_management.model.JwtResponse;
 import com.jitu.lead_management.model.PasswordUpdateModel;
 import com.jitu.lead_management.model.ResetPasswordConfirmModel;
@@ -90,29 +94,47 @@ public class AuthServiceImpl implements AuthService {
         user = userService.save(user);
 
         // Generate Verification Token
-        VerificationToken verificationToken = verificationTokenService.generate(user.getUserId());
+        VerificationToken verificationToken = verificationTokenService.generate(user.getUserId(), user.getEmail());
         // send verification email
         verificationTokenService.sender(user, verificationToken);
     }
 
     @Override
-    public boolean verify(String token) {
-        // fetch token from Database
-        VerificationToken verificationToken = verificationTokenService.findByToken(token);
-
-        // check if token exist and not expired
-        if (verificationTokenService.verify(verificationToken)) {
-            // fetch and set user active
-            int userId = verificationToken.getUserId();
-            User user = userService.get(userId);
+    public void verify(String token) {
+        try {
+            // check if token exist and not expired
+            if (jwtService.isTokenExpired(token)) {
+                throw new VerificationTokenExpiredException("this link has expired");
+            }
+            // fetch reference from token
+            String reference = jwtService.fetchReference(token);
+            // fetch user from database
+            User user = userService.get(reference);
+            // fetch token from Database
+            VerificationToken verificationToken = verificationTokenService.findByUserId(user.getUserId());
+            // check if token found
+            if (verificationToken == null) {
+                throw new VerificationTokenNotFoundException("verification token not found");
+            }
+            // validate token against db token
+            if (!token.equals(verificationToken.getToken())) {
+                throw new InvalidVerificationTokenException("token mismatch");
+            }
+            // Set user active and verified
             user.setActive(1);
             user.setVerified(1);
             userService.save(user);
             // Delete verification token
             verificationTokenService.delete(verificationToken);
-            return true;
+        } catch (VerificationTokenExpiredException e) {
+            throw e;
+        } catch (Exception e) {
+            // Log and handle unexpected exceptions
+            // logger.error("Unexpected error during password update verification", e);
+            logger.error("Unexpected error during user verification, Class: " + e.getClass() + ", Message: "
+                    + e.getMessage());
+            throw new VerificationFailedException("Verification failed, try again");
         }
-        return false;
     }
 
     @Override

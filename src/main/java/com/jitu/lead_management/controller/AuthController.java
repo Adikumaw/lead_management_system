@@ -96,11 +96,9 @@ public class AuthController {
     @GetMapping("/verify-user")
     public ResponseEntity<String> verify(@RequestParam String token) {
         try {
-            if (authService.verify(token)) {
-                return ResponseEntity.ok("Email verified successfully!");
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token");
-            }
+            authService.verify(token);
+
+            return ResponseEntity.ok("Email verified successfully!");
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {

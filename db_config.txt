@@ -15,8 +15,7 @@ CREATE TABLE users (
 
 CREATE TABLE verification_token (
     user_id INT primary key,
-    token varchar(255) not null,
-    expiry_date DATETIME not null,
+    token varchar(1024) not null,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
