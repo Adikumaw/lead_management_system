@@ -17,7 +17,7 @@ import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.UnknownErrorException;
 import com.jitu.lead_management.model.JwtResponse;
 import com.jitu.lead_management.model.PasswordUpdateModel;
-import com.jitu.lead_management.model.ResetRequestModel;
+import com.jitu.lead_management.model.ResetPasswordRequestModel;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
 import com.jitu.lead_management.model.SignUpModel;
@@ -109,7 +109,7 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password/request")
-    public ResponseEntity<String> resetPasswordRequest(@RequestBody ResetRequestModel resetRequest) {
+    public ResponseEntity<String> resetPasswordRequest(@RequestBody ResetPasswordRequestModel resetRequest) {
         try {
             authService.resetPasswordRequest(resetRequest);
 

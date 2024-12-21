@@ -28,7 +28,7 @@ import com.jitu.lead_management.exception.UpdateVerificationTokenNotFoundExcepti
 import com.jitu.lead_management.exception.UserNotFoundException;
 import com.jitu.lead_management.model.JwtResponse;
 import com.jitu.lead_management.model.PasswordUpdateModel;
-import com.jitu.lead_management.model.ResetRequestModel;
+import com.jitu.lead_management.model.ResetPasswordRequestModel;
 import com.jitu.lead_management.model.SignInModel;
 import com.jitu.lead_management.model.SignInResponse;
 import com.jitu.lead_management.model.SignUpModel;
@@ -183,7 +183,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void resetPasswordRequest(ResetRequestModel resetRequest) {
+    public void resetPasswordRequest(ResetPasswordRequestModel resetRequest) {
         try {
             // fetch the user information
             User user = userService.get(resetRequest.getEmail());
