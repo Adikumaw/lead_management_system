@@ -138,6 +138,19 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/verify-password-update")
+    public ResponseEntity<String> verifyPasswordUpdate(@RequestParam String token) {
+        try {
+            authService.verifyPasswordUpdate(token);
+            return ResponseEntity.ok("Password updated successfully!");
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String jwtHeader) {
         try {

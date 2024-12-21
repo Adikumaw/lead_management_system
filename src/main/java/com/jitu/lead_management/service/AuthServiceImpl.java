@@ -2,6 +2,8 @@ package com.jitu.lead_management.service;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,13 +13,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.Miscellaneous.Miscellaneous;
+import com.jitu.lead_management.entity.UpdateVerificationToken;
 import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.entity.VerificationToken;
 import com.jitu.lead_management.exception.InvalidPasswordException;
+import com.jitu.lead_management.exception.InvalidUpdateVerificationTokenException;
 import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.TooManyLoginAttemptsException;
 import com.jitu.lead_management.exception.UnableToLoginException;
 import com.jitu.lead_management.exception.UnableToRefreshTokenException;
+import com.jitu.lead_management.exception.UpdateVerificationFailedException;
+import com.jitu.lead_management.exception.UpdateVerificationTokenExpiredException;
+import com.jitu.lead_management.exception.UpdateVerificationTokenNotFoundException;
 import com.jitu.lead_management.exception.UserNotFoundException;
 import com.jitu.lead_management.model.JwtResponse;
 import com.jitu.lead_management.model.PasswordUpdateModel;
@@ -47,6 +54,8 @@ public class AuthServiceImpl implements AuthService {
     private VerificationService verificationService;
     @Autowired
     private UpdateVerificationTokenService updateVerificationTokenService;
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
     @Override
     public void register(SignUpModel signUpModel) {
@@ -209,6 +218,43 @@ public class AuthServiceImpl implements AuthService {
         String encryptedPassword = passwordEncoder.encode(passwordUpdateModel.getNewPassword());
         // save user to database and send verification email
         updateVerificationTokenService.generateAndSendPasswordUpdateVerification(user, encryptedPassword);
+    }
+
+    @Override
+    public void verifyPasswordUpdate(String token) {
+        try {
+            // Step 1: Check token expiration
+            if (jwtService.isTokenExpired(token)) {
+                throw new UpdateVerificationTokenExpiredException("this link is expired");
+            }
+            // Step 2: Extract reference and fetch user
+            String reference = jwtService.fetchReference(token);
+            User user = userService.get(reference);
+            // Step 3: Retrieve update verification token
+            UpdateVerificationToken updateVerificationToken = updateVerificationTokenService
+                    .findByUserIdAndPrefix(user.getUserId(), UpdateVerificationTokenService.PASSWORD);
+            if (updateVerificationToken == null) {
+                throw new UpdateVerificationTokenNotFoundException("UpdateVerificationToken not found");
+            }
+            // Step 4: Match tokens
+            if (!token.equals(updateVerificationToken.getToken())) {
+                throw new InvalidUpdateVerificationTokenException("token mismatch");
+            }
+            // Step 5: Update password securely
+            String newPassword = updateVerificationTokenService.resolveData(updateVerificationToken.getData());
+            user.setPassword(newPassword);
+            userService.save(user);
+
+            // Step 6: Clean up the token
+            updateVerificationTokenService.delete(updateVerificationToken);
+
+        } catch (UpdateVerificationTokenExpiredException e) {
+            throw e;
+        } catch (Exception e) {
+            // Log and handle unexpected exceptions
+            logger.error("Unexpected error during password update verification", e);
+            throw new UpdateVerificationFailedException("Verification failed, try again");
+        }
     }
 
     // =================================================================

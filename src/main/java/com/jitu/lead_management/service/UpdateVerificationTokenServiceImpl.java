@@ -9,6 +9,7 @@ import com.jitu.lead_management.Miscellaneous.EmailTemplate;
 import com.jitu.lead_management.entity.UpdateVerificationToken;
 import com.jitu.lead_management.entity.User;
 import com.jitu.lead_management.exception.InvalidPrefixException;
+import com.jitu.lead_management.exception.InvalidUpdateVerificationTokenDataException;
 import com.jitu.lead_management.repository.UpdateVerificationTokenRepository;
 
 @Service
@@ -71,6 +72,11 @@ public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTok
     }
 
     @Override
+    public void delete(UpdateVerificationToken updateVerificationToken) {
+        updateVerificationTokenRepository.delete(updateVerificationToken);
+    }
+
+    @Override
     public UpdateVerificationToken findByData(String data) {
         return updateVerificationTokenRepository.findByData(data).orElse(null);
     }
@@ -91,7 +97,7 @@ public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTok
             return ""; // Return empty string for null or empty input
         }
         int indexOfColon = data.indexOf(":");
-        return indexOfColon > 0 ? data.substring(0, indexOfColon) : data;
+        return indexOfColon > 0 ? data.substring(0, indexOfColon) : "";
     }
 
     @Override
@@ -102,6 +108,18 @@ public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTok
             return "email:" + data;
         }
         throw new InvalidPrefixException("Invalid prefix: " + prefix);
+    }
+
+    @Override
+    public String resolveData(String data) {
+        if (data == null || data.isEmpty()) {
+            throw new InvalidUpdateVerificationTokenDataException("Input data cannot be null or empty.");
+        }
+        int indexOfColon = data.indexOf(":");
+        if (indexOfColon >= 0) {
+            return data.substring(indexOfColon);
+        }
+        throw new InvalidUpdateVerificationTokenDataException("Invalid data format: " + data);
     }
 
 }
