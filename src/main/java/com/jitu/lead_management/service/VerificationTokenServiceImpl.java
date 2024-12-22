@@ -16,7 +16,7 @@ import com.jitu.lead_management.repository.VerificationTokenRepository;
 @Service
 public class VerificationTokenServiceImpl implements VerificationTokenService {
 
-    private String verificationLink = "http://localhost:8080/api/auth/verify-user?token=";
+    private String verificationLink = "http://localhost:3000/verify-account/";
     private String applicationName = "Lead Management";
     private String emailSubject = "Verify Your Email Address for " + applicationName;
     private int EXPIRATION = 24;
