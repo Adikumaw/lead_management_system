@@ -59,6 +59,16 @@ CREATE TABLE leads (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE itinerary (
+    itinerary_id INT PRIMARY KEY,
+    template_name VARCHAR(30) NOT NULL,
+    subject VARCHAR(255) NOT NULL,
+    trip_details TEXT,
+    thank_you_note TEXT,
+    terms_and_conditions TEXT
+);
+
+
 create table quotation(
     quotation_id int auto_increment primary key,
     user_id INT,
@@ -70,7 +80,7 @@ create table quotation(
     currency varchar(3) not null,
     subject varchar(70) not null,
     trip_details text not null,
-    notes text,
+    thank_you_note text,
     terms_and_conditions text,
     no_of_adults INT DEFAULT 0,
     cost_per_adult DECIMAL(10,2) DEFAULT 0.00,
