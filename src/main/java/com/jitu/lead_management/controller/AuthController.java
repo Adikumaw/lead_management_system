@@ -93,7 +93,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/verify-user")
+    @PostMapping("/verify-user")
     public ResponseEntity<String> verify(@RequestParam String token) {
         try {
             authService.verify(token);
