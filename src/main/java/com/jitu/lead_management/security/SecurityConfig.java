@@ -33,7 +33,7 @@ public class SecurityConfig {
                 // Login & sign in ENDPOINTS
                 .requestMatchers(HttpMethod.POST, "/api/auth/signup").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/signin").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/auth/verify-user").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/verify-user").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/signup/resend-token").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/reset-password/request").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/reset-password/confirm").permitAll()
