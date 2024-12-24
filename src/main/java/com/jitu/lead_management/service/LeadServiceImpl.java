@@ -1,7 +1,6 @@
 package com.jitu.lead_management.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +49,10 @@ public class LeadServiceImpl implements LeadService {
         int userId = userService.findUserIdByEmail(reference);
 
         int intLeadId = LeadUtils.resolveLeadId(leadId);
-        Optional<Lead> optionalLead = leadRepository.findByLeadIdAndUserId(intLeadId, userId);
+        Lead lead = leadRepository.findByLeadIdAndUserId(intLeadId, userId)
+                .orElseThrow(() -> new LeadNotFoundException("Error: Lead not found"));
 
-        if (optionalLead.isPresent()) {
-            return new LeadViewModel(optionalLead.get());
-        }
-
-        throw new LeadNotFoundException("Error: Lead not found");
+        return new LeadViewModel(lead);
     }
 
     @Override

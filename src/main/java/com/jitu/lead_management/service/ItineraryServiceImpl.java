@@ -1,7 +1,6 @@
 package com.jitu.lead_management.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +28,10 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Override
     public ItineraryViewModel findById(String itineraryId) {
         int intItineraryId = ItineraryUtils.resolveItineraryId(itineraryId);
-        Optional<Itinerary> itinerary = itineraryRepository.findById(intItineraryId);
-        if (itinerary.isPresent()) {
-            return new ItineraryViewModel(itinerary.get());
-        }
-        throw new ItineraryNotFoundException("Error: Itinerary not found");
+        Itinerary itinerary = itineraryRepository.findById(intItineraryId)
+                .orElseThrow(() -> new ItineraryNotFoundException("Error: Itinerary not found"));
+
+        return new ItineraryViewModel(itinerary);
     }
 
     @Override
