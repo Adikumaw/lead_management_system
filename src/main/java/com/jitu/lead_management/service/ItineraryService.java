@@ -13,6 +13,8 @@ public interface ItineraryService {
 
     List<ItineraryViewModel> findAll();
 
+    List<String> fetchItineraryNames();
+
     void update(String itineraryId, ItineraryModificationModel itineraryModel);
 
     void deleteByIds(List<String> itineraryIds);

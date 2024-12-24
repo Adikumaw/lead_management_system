@@ -68,6 +68,18 @@ public class ItineraryController {
         }
     }
 
+    @GetMapping("/fetch-itinerary-names")
+    public List<String> fetchItineraryNames() {
+        try {
+            return itineraryService.fetchItineraryNames();
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
+
     @PutMapping("/update")
     public ResponseEntity<String> update(@RequestParam String id,
             @RequestBody ItineraryModificationModel itinerary) {

@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.entity.Itinerary;
+import com.jitu.lead_management.exception.DuplicateTemplateNameException;
 import com.jitu.lead_management.exception.ItineraryNotFoundException;
 import com.jitu.lead_management.model.ItineraryModificationModel;
 import com.jitu.lead_management.model.ItineraryViewModel;
@@ -22,7 +24,18 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Override
     public void createItinerary(ItineraryModificationModel itineraryModel) {
         Itinerary itinerary = new Itinerary(itineraryModel);
-        itineraryRepository.save(itinerary);
+        try {
+            itineraryRepository.save(itinerary);
+        } catch (DataIntegrityViolationException e) {
+            // Check if error Message has following values "Duplicate entry" or
+            // "u_template_name_itinerary"
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("Duplicate entry") || errorMessage.contains("u_template_name_itinerary")) {
+                throw new DuplicateTemplateNameException("Duplicate template names are not allowed");
+            } else {
+                throw e;
+            }
+        }
     }
 
     @Override
@@ -38,6 +51,11 @@ public class ItineraryServiceImpl implements ItineraryService {
     public List<ItineraryViewModel> findAll() {
         List<Itinerary> itineraryList = itineraryRepository.findAll();
         return itineraryList.stream().map(ItineraryViewModel::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> fetchItineraryNames() {
+        return itineraryRepository.fetchTemplateNames();
     }
 
     @Override
