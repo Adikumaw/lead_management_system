@@ -1,7 +1,5 @@
 package com.jitu.lead_management.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +15,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int findUserIdByEmail(String email) {
-        return userRepository.findUserIdByEmail(email).orElse(0);
+        int userId = userRepository.findUserIdByEmail(email).orElse(0);
+        if (userId != 0) {
+            return userId;
+        }
+        throw new UserNotFoundException("User not found by Email. Please Sign Up");
     }
 
     @Override
@@ -27,12 +29,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User get(String email) {
-
-        Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            return user.get();
-        }
-        throw new UserNotFoundException("User not found by Email. Please Sign Up");
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found by Email. Please Sign Up"));
+        return user;
     }
 
     @Override

@@ -12,37 +12,29 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jitu.lead_management.exception.LeadManagementException;
 import com.jitu.lead_management.exception.UnknownErrorException;
-import com.jitu.lead_management.model.LeadModificationModel;
-import com.jitu.lead_management.model.LeadViewModel;
-import com.jitu.lead_management.service.JWTService;
-import com.jitu.lead_management.service.LeadService;
+import com.jitu.lead_management.model.ItineraryModificationModel;
+import com.jitu.lead_management.model.ItineraryViewModel;
+import com.jitu.lead_management.service.ItineraryService;
 
 @RestController
-@RequestMapping("/api/leads")
-public class LeadController {
+@RequestMapping("/api/itinerary")
+public class ItineraryController {
 
     @Autowired
-    private JWTService jwtService;
-    @Autowired
-    private LeadService leadService;
+    private ItineraryService itineraryService;
 
-    private static final Logger logger = LoggerFactory.getLogger(LeadController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ItineraryController.class);
 
     @PostMapping("/create")
-    public ResponseEntity<String> create(@RequestBody LeadModificationModel lead,
-            @RequestHeader("Authorization") String jwtHeader) {
+    public ResponseEntity<String> create(@RequestBody ItineraryModificationModel itinerary) {
         try {
-            String reference = jwtService.resolveReference(jwtHeader);
-
-            leadService.createLead(reference, lead);
-
+            itineraryService.createItinerary(itinerary);
             return new ResponseEntity<>("Sucess", HttpStatus.OK);
         } catch (LeadManagementException e) {
             throw e;
@@ -52,12 +44,10 @@ public class LeadController {
         }
     }
 
-    @GetMapping("fetch")
-    public List<LeadViewModel> getLeads(@RequestHeader("Authorization") String jwtHeader) {
+    @GetMapping("/fetch-by-id")
+    public ItineraryViewModel findById(@RequestParam String id) {
         try {
-            String reference = jwtService.resolveReference(jwtHeader);
-
-            return leadService.getLeads(reference);
+            return itineraryService.findById(id);
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
@@ -66,13 +56,10 @@ public class LeadController {
         }
     }
 
-    @GetMapping("fetch-by-id")
-    public LeadViewModel getLeadById(@RequestParam String id,
-            @RequestHeader("Authorization") String jwtHeader) {
+    @GetMapping("/fetch")
+    public List<ItineraryViewModel> findAll() {
         try {
-            String reference = jwtService.resolveReference(jwtHeader);
-
-            return leadService.getLeadById(id, reference);
+            return itineraryService.findAll();
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
@@ -83,13 +70,9 @@ public class LeadController {
 
     @PutMapping("/update")
     public ResponseEntity<String> update(@RequestParam String id,
-            @RequestBody LeadModificationModel lead,
-            @RequestHeader("Authorization") String jwtHeader) {
+            @RequestBody ItineraryModificationModel itinerary) {
         try {
-            String reference = jwtService.resolveReference(jwtHeader);
-
-            leadService.updateLead(reference, id, lead);
-
+            itineraryService.update(id, itinerary);
             return new ResponseEntity<>("Sucess", HttpStatus.OK);
         } catch (LeadManagementException e) {
             throw e;
@@ -99,14 +82,11 @@ public class LeadController {
         }
     }
 
-    @DeleteMapping("delete-by-ids")
-    public ResponseEntity<String> deleteLeadsByIds(@RequestParam List<String> ids,
-            @RequestHeader("Authorization") String jwtHeader) {
+    @DeleteMapping("/delete-by-ids")
+    public ResponseEntity<String> deleteByIds(
+            @RequestParam List<String> ids) {
         try {
-            String reference = jwtService.resolveReference(jwtHeader);
-
-            leadService.deleteLeadsByIds(ids, reference);
-
+            itineraryService.deleteByIds(ids);
             return new ResponseEntity<>("Sucess", HttpStatus.OK);
         } catch (LeadManagementException e) {
             throw e;
@@ -116,13 +96,10 @@ public class LeadController {
         }
     }
 
-    @DeleteMapping("delete-all")
-    public ResponseEntity<String> deleteAllLeads(@RequestHeader("Authorization") String jwtHeader) {
+    @DeleteMapping("/delete-by-id")
+    public ResponseEntity<String> deleteById(@RequestParam String id) {
         try {
-            String reference = jwtService.resolveReference(jwtHeader);
-
-            leadService.deleteAllLeads(reference);
-
+            itineraryService.deleteById(id);
             return new ResponseEntity<>("Sucess", HttpStatus.OK);
         } catch (LeadManagementException e) {
             throw e;
@@ -132,14 +109,10 @@ public class LeadController {
         }
     }
 
-    @DeleteMapping("delete-by-id")
-    public ResponseEntity<String> deleteByLeadId(@RequestParam String id,
-            @RequestHeader("Authorization") String jwtHeader) {
+    @DeleteMapping("/delete-all")
+    public ResponseEntity<String> deleteAll() {
         try {
-            String reference = jwtService.resolveReference(jwtHeader);
-
-            leadService.deleteByLeadId(id, reference);
-
+            itineraryService.deleteAll();
             return new ResponseEntity<>("Sucess", HttpStatus.OK);
         } catch (LeadManagementException e) {
             throw e;
@@ -147,11 +120,6 @@ public class LeadController {
             logger.error("Unknown error: " + e.getMessage(), e);
             throw new UnknownErrorException("Error: unknown error");
         }
-    }
-
-    @GetMapping("/test")
-    public String getMethodName(@RequestParam String param) {
-        return new String("sucessful: " + param);
     }
 
 }
