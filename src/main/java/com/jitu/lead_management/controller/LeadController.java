@@ -67,12 +67,12 @@ public class LeadController {
     }
 
     @GetMapping("fetch-by-id")
-    public LeadViewModel getLeadById(@RequestParam String leadId,
+    public LeadViewModel getLeadById(@RequestParam String id,
             @RequestHeader("Authorization") String jwtHeader) {
         try {
             String reference = jwtService.resolveReference(jwtHeader);
 
-            return leadService.getLeadById(leadId, reference);
+            return leadService.getLeadById(id, reference);
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
@@ -82,13 +82,13 @@ public class LeadController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> update(@RequestParam("lead_id") String leadId,
+    public ResponseEntity<String> update(@RequestParam String id,
             @RequestBody LeadModificationModel lead,
             @RequestHeader("Authorization") String jwtHeader) {
         try {
             String reference = jwtService.resolveReference(jwtHeader);
 
-            leadService.updateLead(reference, leadId, lead);
+            leadService.updateLead(reference, id, lead);
 
             return new ResponseEntity<>("Sucess", HttpStatus.OK);
         } catch (LeadManagementException e) {
@@ -100,12 +100,14 @@ public class LeadController {
     }
 
     @DeleteMapping("delete-by-ids")
-    public List<LeadViewModel> deleteLeadsByIds(@RequestParam List<String> leadIds,
+    public ResponseEntity<String> deleteLeadsByIds(@RequestParam List<String> ids,
             @RequestHeader("Authorization") String jwtHeader) {
         try {
             String reference = jwtService.resolveReference(jwtHeader);
 
-            return leadService.deleteLeadsByIds(leadIds, reference);
+            leadService.deleteLeadsByIds(ids, reference);
+
+            return new ResponseEntity<>("Sucess", HttpStatus.OK);
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
@@ -115,11 +117,13 @@ public class LeadController {
     }
 
     @DeleteMapping("delete-all")
-    public List<LeadViewModel> deleteAllLeads(@RequestHeader("Authorization") String jwtHeader) {
+    public ResponseEntity<String> deleteAllLeads(@RequestHeader("Authorization") String jwtHeader) {
         try {
             String reference = jwtService.resolveReference(jwtHeader);
 
-            return leadService.deleteAllLeads(reference);
+            leadService.deleteAllLeads(reference);
+
+            return new ResponseEntity<>("Sucess", HttpStatus.OK);
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {
@@ -129,12 +133,14 @@ public class LeadController {
     }
 
     @DeleteMapping("delete-by-id")
-    public List<LeadViewModel> deleteByLeadId(@RequestParam String leadId,
+    public ResponseEntity<String> deleteByLeadId(@RequestParam String id,
             @RequestHeader("Authorization") String jwtHeader) {
         try {
             String reference = jwtService.resolveReference(jwtHeader);
 
-            return leadService.deleteByLeadId(leadId, reference);
+            leadService.deleteByLeadId(id, reference);
+
+            return new ResponseEntity<>("Sucess", HttpStatus.OK);
         } catch (LeadManagementException e) {
             throw e;
         } catch (Exception e) {

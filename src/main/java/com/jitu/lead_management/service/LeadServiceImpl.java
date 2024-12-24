@@ -65,50 +65,38 @@ public class LeadServiceImpl implements LeadService {
 
         int intLeadId = LeadUtils.resolveLeadId(leadId);
 
-        Optional<Lead> optionalLead = leadRepository.findByLeadIdAndUserId(intLeadId, userId);
+        Lead lead = leadRepository.findByLeadIdAndUserId(intLeadId, userId)
+                .orElseThrow(() -> new LeadNotFoundException("Error: lead not found"));
 
-        if (optionalLead.isPresent()) {
-            Lead lead = LeadUtils.mapLeadUpdate(optionalLead.get(), requestLead);
+        lead = LeadUtils.mapLeadUpdate(lead, requestLead);
 
-            leadRepository.save(lead);
-        } else {
-            throw new LeadNotFoundException("Error: Lead not found");
-        }
+        leadRepository.save(lead);
     }
 
     @Override
-    public List<LeadViewModel> deleteLeadsByIds(List<String> leadIds, String reference) {
+    public void deleteLeadsByIds(List<String> leadIds, String reference) {
         int userId = userService.findUserIdByEmail(reference);
 
         // convert String of leadIds to original Integer lead IDs
         List<Integer> intLeadIds = leadIds.stream().map(LeadUtils::resolveLeadId).collect(Collectors.toList());
 
         leadRepository.deleteByLeadIdInAndUserId(intLeadIds, userId);
-
-        // fetch and return results
-        return getLeads(userId);
     }
 
     @Override
-    public List<LeadViewModel> deleteAllLeads(String reference) {
+    public void deleteAllLeads(String reference) {
         int userId = userService.findUserIdByEmail(reference);
 
         leadRepository.deleteAllByUserId(userId);
-
-        // fetch and return results
-        return getLeads(userId);
     }
 
     @Override
-    public List<LeadViewModel> deleteByLeadId(String leadId, String reference) {
+    public void deleteByLeadId(String leadId, String reference) {
         int userId = userService.findUserIdByEmail(reference);
 
         int intLeadId = LeadUtils.resolveLeadId(leadId);
 
         leadRepository.deleteByLeadIdAndUserId(intLeadId, userId);
-
-        // fetch and return results
-        return getLeads(userId);
     }
 
 }

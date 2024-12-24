@@ -15,11 +15,11 @@ public interface LeadService {
 
     LeadViewModel getLeadById(String leadId, String reference);
 
-    List<LeadViewModel> deleteLeadsByIds(List<String> leadIds, String reference);
+    void deleteLeadsByIds(List<String> leadIds, String reference);
 
-    List<LeadViewModel> deleteAllLeads(String reference);
+    void deleteAllLeads(String reference);
 
-    List<LeadViewModel> deleteByLeadId(String leadId, String reference);
+    void deleteByLeadId(String leadId, String reference);
 
     void updateLead(String reference, String leadId, LeadModificationModel requestLead);
 }
