@@ -21,4 +21,7 @@ public interface ItineraryRepository extends JpaRepository<Itinerary, Integer> {
     @Query("SELECT i.templateName FROM Itinerary i")
     List<String> fetchTemplateNames();
 
+    @Query("SELECT i.templateName FROM Itinerary i")
+    List<String> fetchTemplateNames();
+
 }
