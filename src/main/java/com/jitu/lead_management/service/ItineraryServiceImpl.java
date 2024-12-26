@@ -24,18 +24,7 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Override
     public void createItinerary(ItineraryModificationModel itineraryModel) {
         Itinerary itinerary = new Itinerary(itineraryModel);
-        try {
-            itineraryRepository.save(itinerary);
-        } catch (DataIntegrityViolationException e) {
-            // Check if error Message has following values "Duplicate entry" or
-            // "u_template_name_itinerary"
-            String errorMessage = e.getMessage();
-            if (errorMessage.contains("Duplicate entry") || errorMessage.contains("u_template_name_itinerary")) {
-                throw new DuplicateTemplateNameException("Duplicate template names are not allowed");
-            } else {
-                throw e;
-            }
-        }
+        save(itinerary);
     }
 
     @Override
@@ -67,7 +56,7 @@ public class ItineraryServiceImpl implements ItineraryService {
 
         itinerary = ItineraryUtils.mapItineraryUpdate(itinerary, itineraryModel);
 
-        itineraryRepository.save(itinerary);
+        save(itinerary);
     }
 
     @Override
@@ -86,6 +75,21 @@ public class ItineraryServiceImpl implements ItineraryService {
     @Override
     public void deleteAll() {
         itineraryRepository.deleteAll();
+    }
+
+    private void save(Itinerary itinerary) {
+        try {
+            itineraryRepository.save(itinerary);
+        } catch (DataIntegrityViolationException e) {
+            // Check if error Message has following values "Duplicate entry" or
+            // "u_template_name_itinerary"
+            String errorMessage = e.getMessage();
+            if (errorMessage.contains("Duplicate entry") || errorMessage.contains("u_template_name_itinerary")) {
+                throw new DuplicateTemplateNameException("Duplicate template names are not allowed");
+            } else {
+                throw e;
+            }
+        }
     }
 
 }
