@@ -20,7 +20,7 @@ CREATE TABLE verification_token (
 );
 
 CREATE TABLE update_verification_token (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT,
     data varchar(100) NOT NULL,
     token varchar(1024) not null,
@@ -60,7 +60,7 @@ CREATE TABLE leads (
 );
 
 CREATE TABLE itinerary (
-    itinerary_id INT PRIMARY KEY,
+    itinerary_id INT PRIMARY KEY AUTO_INCREMENT,
     template_name VARCHAR(30) NOT NULL,
     subject VARCHAR(255) NOT NULL,
     trip_details TEXT,

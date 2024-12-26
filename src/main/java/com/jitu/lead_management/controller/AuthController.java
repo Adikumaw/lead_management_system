@@ -182,7 +182,7 @@ public class AuthController {
 
     @GetMapping("/test")
     public String getMethodName(@RequestParam String param) {
-        return new String("sucessful: " + param);
+        return "sucessful: " + param;
     }
 
 }
