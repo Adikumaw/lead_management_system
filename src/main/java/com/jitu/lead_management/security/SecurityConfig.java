@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/auth/reset-password/request").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/reset-password/confirm").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/verify-password-update").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/images/download/*").permitAll()
                 // .requestMatchers(HttpMethod.GET, "/api/leads/create").permitAll()
                 // .requestMatchers(HttpMethod.GET, "/api/auth/test").
                 .anyRequest().authenticated());

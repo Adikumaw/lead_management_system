@@ -1,0 +1,17 @@
+{
+    "properties": [
+      {
+        "name": "image.storage.path",
+        "type": "java.lang.String",
+        "description": "Path to the local image storage directory.",
+        "defaultValue": "/default/path"
+      },
+      {
+        "name": "image.download.url",
+        "type": "java.lang.String",
+        "description": "URL to access images.",
+        "defaultValue": "http://localhost:8080/images/downloads/"
+      }
+    ]
+  }
+  
