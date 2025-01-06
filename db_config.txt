@@ -92,3 +92,11 @@ create table quotation(
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+create table image_metadata(
+ id int primary key auto_increment,
+ image_name varchar(40) not null,
+ image_path varchar(110) not null,
+ download_url varchar(100) not null,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
