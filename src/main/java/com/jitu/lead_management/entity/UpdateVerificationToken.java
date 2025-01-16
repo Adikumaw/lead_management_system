@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "update_verification_token")
+@Table(name = "update_verification_tokens")
 public class UpdateVerificationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

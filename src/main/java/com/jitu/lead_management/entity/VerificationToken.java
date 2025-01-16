@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "verification_token")
+@Table(name = "verification_tokens")
 public class VerificationToken {
     @Id
     @Column(name = "user_id")
