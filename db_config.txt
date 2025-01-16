@@ -10,37 +10,39 @@ CREATE TABLE users (
     login TINYINT(1) NOT NULL DEFAULT 0,
     login_attempts TINYINT(1) NOT NULL DEFAULT 0,
     lock_expiration_time DATETIME,
-    refresh_token VARCHAR(255)
+    refresh_token VARCHAR(255),
+    INDEX idx_email (email)
 );
 
-CREATE TABLE verification_token (
-    user_id INT primary key,
-    token varchar(1024) not null,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+CREATE TABLE verification_tokens (
+    user_id INT PRIMARY KEY,
+    token VARCHAR(1024) NOT NULL,
+    CONSTRAINT fk_user_id_vts FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE update_verification_token (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    data varchar(100) NOT NULL,
-    token varchar(1024) not null,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+CREATE TABLE update_verification_tokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    data VARCHAR(100) NOT NULL,
+    token VARCHAR(1024) NOT NULL,
+    CONSTRAINT fk_user_id_uvts FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id)
 );
 
-create table reset_request( 
-    user_id int primary key,
-    token varchar(1024) not null, 
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+CREATE TABLE reset_password_requests (
+    user_id INT PRIMARY KEY,
+    token VARCHAR(1024) NOT NULL,
+    CONSTRAINT fk_user_id_rrs FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE leads (
     lead_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
+    user_id INT NOT NULL,
     stage ENUM('hot', 'warm', 'cold', 'not interested', 'not answer', 'proposal', 'meeting fixed', 
                'converted to clients', 'meeting completed', 'active', 'converted to hot deals') NOT NULL,
     client_name VARCHAR(100) NOT NULL,
     client_contact_no VARCHAR(15) NOT NULL,
-    client_email_id VARCHAR(100),
+    client_email_id VARCHAR(100) NOT NULL,
     follow_up DATETIME,
     executive VARCHAR(100) NOT NULL,
     status ENUM('unattended', 'blocked', 'proposal sent', 'spoke', 'meeting fixed', 'met', 
@@ -49,54 +51,173 @@ CREATE TABLE leads (
     enquiry_type ENUM('flight booking', 'hotel booking', 'sight seeing', 'transport', 'other') NOT NULL,
     package VARCHAR(255),
     planned_travel_date DATETIME,
-    destination VARCHAR(100),
+    destination VARCHAR(100) NOT NULL,
     no_of_adults INT DEFAULT 0,
     budget_per_adult DECIMAL(10,2) DEFAULT 0.00,
     no_of_children INT DEFAULT 0,
-    budget_per_children DECIMAL(10,2) DEFAULT 0.00,
+    budget_per_child DECIMAL(10,2) DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+    CONSTRAINT fk_user_id_lds FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE itinerary (
     itinerary_id INT PRIMARY KEY AUTO_INCREMENT,
     template_name VARCHAR(30) NOT NULL,
     subject VARCHAR(255) NOT NULL,
-    trip_details TEXT,
+    trip_details TEXT NOT NULL,
     thank_you_note TEXT,
     terms_and_conditions TEXT
 );
 
-
-create table quotation(
-    quotation_id int auto_increment primary key,
-    user_id INT,
+CREATE TABLE quotations (
+    quotation_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    currency VARCHAR(3) NOT NULL,
+    executive VARCHAR(100) NOT NULL,
     client_name VARCHAR(100) NOT NULL,
     client_contact_no VARCHAR(15) NOT NULL,
-    client_email_id VARCHAR(100),
-    executive VARCHAR(100) NOT NULL,
-    destination VARCHAR(100),
-    currency varchar(3) not null,
-    subject varchar(70) not null,
-    trip_details text not null,
-    thank_you_note text,
-    terms_and_conditions text,
+    client_email_id VARCHAR(100) NOT NULL,
     no_of_adults INT DEFAULT 0,
-    cost_per_adult DECIMAL(10,2) DEFAULT 0.00,
     no_of_children INT DEFAULT 0,
-    cost_per_children DECIMAL(10,2) DEFAULT 0.00,
+    destination VARCHAR(100),
+    subject VARCHAR(70) NOT NULL,
+    trip_details TEXT NOT NULL,
+    thank_you_note TEXT,
+    terms_and_conditions TEXT,
+    sub_total DECIMAL(10,2) NOT NULL,
+    discount DECIMAL(5,2) NOT NULL,
+    total DECIMAL(10,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    valid_up_to TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+    valid_upto TIMESTAMP,
+    CONSTRAINT fk_user_id_qts FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    INDEX idx_user_id (user_id)
 );
 
+CREATE TABLE product_cars(
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    hourly_price DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE product_hotels(
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    room_type VARCHAR(100) NOT NULL,
+    hourly_price DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE product_restaurants(
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    avg_per_child_price DECIMAL(10,2) NOT NULL,
+    avg_per_adult_price DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE product_places(
+    product_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    per_child_price DECIMAL(10,2) NOT NULL,
+    per_adult_price DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE quotation_product_cars (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quotation_id INT NOT NULL,
+    product_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    no_of_cars INT NOT NULL,
+    no_of_days INT NOT NULL,
+    from_date TIMESTAMP NOT NULL,
+    to_date TIMESTAMP NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_quotation_id_qpcs FOREIGN KEY (quotation_id) REFERENCES quotations(quotation_id) ON DELETE CASCADE,
+    CONSTRAINT fk_product_id_qpcs FOREIGN KEY (product_id) REFERENCES product_cars(product_id) ON DELETE CASCADE,
+    INDEX idx_quotation_id (quotation_id),
+    INDEX idx_product_id (product_id)
+);
+
+CREATE TABLE quotation_product_trains (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quotation_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    no_of_children INT NOT NULL,
+    no_of_adults INT NOT NULL,
+    from_date TIMESTAMP NOT NULL,
+    to_date TIMESTAMP NOT NULL,
+    from_station VARCHAR(100) NOT NULL,
+    to_station VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_quotation_id_qpts FOREIGN KEY (quotation_id) REFERENCES quotations(quotation_id) ON DELETE CASCADE,
+    INDEX idx_quotation_id (quotation_id)
+);
+
+CREATE TABLE quotation_product_planes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quotation_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    no_of_children INT NOT NULL,
+    no_of_adults INT NOT NULL,
+    from_date TIMESTAMP NOT NULL,
+    to_date TIMESTAMP NOT NULL,
+    from_airport VARCHAR(100) NOT NULL,
+    to_airport VARCHAR(100) NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_quotation_id_qpps FOREIGN KEY (quotation_id) REFERENCES quotations(quotation_id) ON DELETE CASCADE,
+    INDEX idx_quotation_id (quotation_id)
+);
+
+CREATE TABLE quotation_product_hotels (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quotation_id INT NOT NULL,
+    product_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    room_type VARCHAR(100) NOT NULL,
+    no_of_rooms INT NOT NULL,
+    no_of_days INT NOT NULL,
+    check_in_date TIMESTAMP NOT NULL,
+    check_out_date TIMESTAMP NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_quotation_id_qphts FOREIGN KEY (quotation_id) REFERENCES quotations(quotation_id) ON DELETE CASCADE,
+    CONSTRAINT fk_product_id_qphts FOREIGN KEY (product_id) REFERENCES product_hotels(product_id) ON DELETE CASCADE,
+    INDEX idx_quotation_id (quotation_id),
+    INDEX idx_product_id (product_id)
+);
+
+CREATE TABLE quotation_product_places (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quotation_id INT NOT NULL,
+    product_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    no_of_children INT NOT NULL,
+    no_of_adults INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_quotation_id_qppls FOREIGN KEY (quotation_id) REFERENCES quotations(quotation_id) ON DELETE CASCADE,
+    CONSTRAINT fk_product_id_qppls FOREIGN KEY (product_id) REFERENCES product_places(product_id) ON DELETE CASCADE,
+    INDEX idx_quotation_id (quotation_id),
+    INDEX idx_product_id (product_id)
+);
+
+CREATE TABLE quotation_product_restaurants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    quotation_id INT NOT NULL,
+    product_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    no_of_children INT NOT NULL,
+    no_of_adults INT NOT NULL,
+    avg_price DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_quotation_id_qprsts FOREIGN KEY (quotation_id) REFERENCES quotations(quotation_id) ON DELETE CASCADE,
+    CONSTRAINT fk_product_id_qprsts FOREIGN KEY (product_id) REFERENCES product_restaurants(product_id) ON DELETE CASCADE,
+    INDEX idx_quotation_id (quotation_id),
+    INDEX idx_product_id (product_id)
+);
+
+
 create table image_metadata(
- id int primary key auto_increment,
- image_name varchar(45) not null,
- image_path varchar(110) not null,
- download_url varchar(100) not null,
+ id INT AUTO_INCREMENT PRIMARY KEY,
+ image_name VARCHAR(45) NOT NULL,
+ image_path VARCHAR(110) NOT NULL,
+ download_url VARCHAR(100) NOT NULL,
  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
