@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.Miscellaneous.EmailTemplate;
@@ -16,8 +17,10 @@ import com.jitu.lead_management.repository.VerificationTokenRepository;
 @Service
 public class VerificationTokenServiceImpl implements VerificationTokenService {
 
-    private String verificationLink = "http://localhost:3000/verify-account/";
-    private String applicationName = "Lead Management";
+    @Value("${account.verify.url}")
+    private String accountVerifyLink;
+    @Value("${spring.application.name}")
+    private String applicationName;
     private String emailSubject = "Verify Your Email Address for " + applicationName;
     private int EXPIRATION = 24;
     @Autowired
@@ -48,7 +51,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         String token = verificationToken.getToken();
         String verificationTemplate = EmailTemplate.EMAIL_VERIFICATION_TEMPLATE;
         String formatedMessage = String.format(verificationTemplate, user.getName(), applicationName,
-                verificationLink + token, EXPIRATION, applicationName,
+                accountVerifyLink + token, EXPIRATION, applicationName,
                 applicationName);
 
         try {
@@ -64,7 +67,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         String token = verificationToken.getToken();
         String verificationTemplate = EmailTemplate.EMAIL_VERIFICATION_TEMPLATE;
         String formatedMessage = String.format(verificationTemplate, user.getName(), applicationName,
-                verificationLink + token, EXPIRATION, applicationName,
+                accountVerifyLink + token, EXPIRATION, applicationName,
                 applicationName);
 
         try {
