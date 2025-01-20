@@ -1,5 +1,7 @@
 package com.jitu.lead_management.entity;
 
+import com.jitu.lead_management.model.ProductCarModificationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,4 +26,9 @@ public class ProductCar {
     private String name;
     @Column(name = "hourly_price")
     private double hourlyPrice;
+
+    public ProductCar(ProductCarModificationModel productCarModel) {
+        this.name = productCarModel.getName();
+        this.hourlyPrice = productCarModel.getHourlyPrice();
+    }
 }

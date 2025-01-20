@@ -2,6 +2,8 @@ package com.jitu.lead_management.entity;
 
 import java.util.Date;
 
+import com.jitu.lead_management.model.QuotationProductPlaneModificationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,8 +27,8 @@ public class QuotationProductPlane {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "quotation_id")
-    private int quotationId;
+    // @Column(name = "quotation_id", insertable = false, updatable = false)
+    // private int quotationId;
     @Column(name = "name")
     private String name;
     @Column(name = "no_of_children")
@@ -45,6 +47,17 @@ public class QuotationProductPlane {
     private double price;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "quotation_id")
+    @JoinColumn(name = "quotation_id", nullable = false)
     private Quotation quotation;
+
+    public QuotationProductPlane(QuotationProductPlaneModificationModel QuotationProductPlaneModel) {
+        this.name = QuotationProductPlaneModel.getName();
+        this.noOfChildren = QuotationProductPlaneModel.getNoOfChildren();
+        this.noOfAdults = QuotationProductPlaneModel.getNoOfAdults();
+        this.fromDate = QuotationProductPlaneModel.getFromDate();
+        this.toDate = QuotationProductPlaneModel.getToDate();
+        this.from = QuotationProductPlaneModel.getFrom();
+        this.to = QuotationProductPlaneModel.getTo();
+        this.price = QuotationProductPlaneModel.getPrice();
+    }
 }

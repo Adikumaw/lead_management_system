@@ -1,5 +1,8 @@
 package com.jitu.lead_management.entity;
 
+import com.jitu.lead_management.model.QuotationProductPlaceModificationModel;
+import com.jitu.lead_management.utils.ProductUtils;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,8 +26,8 @@ public class QuotationProductPlace {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "quotation_id")
-    private int quotationId;
+    // @Column(name = "quotation_id", insertable = false, updatable = false)
+    // private int quotationId;
     @Column(name = "product_id")
     private int productId;
     @Column(name = "name")
@@ -37,6 +40,14 @@ public class QuotationProductPlace {
     private double price;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "quotation_id")
+    @JoinColumn(name = "quotation_id", nullable = false)
     private Quotation quotation;
+
+    public QuotationProductPlace(QuotationProductPlaceModificationModel QuotationProductPlaceModel) {
+        this.productId = ProductUtils.resolveProductId(QuotationProductPlaceModel.getId());
+        this.name = QuotationProductPlaceModel.getName();
+        this.noOfChildren = QuotationProductPlaceModel.getNoOfChildren();
+        this.noOfAdults = QuotationProductPlaceModel.getNoOfAdults();
+        this.price = QuotationProductPlaceModel.getPrice();
+    }
 }

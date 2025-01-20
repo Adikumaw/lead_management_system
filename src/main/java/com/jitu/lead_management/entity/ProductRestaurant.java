@@ -1,5 +1,7 @@
 package com.jitu.lead_management.entity;
 
+import com.jitu.lead_management.model.ProductRestaurantModificationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,4 +28,10 @@ public class ProductRestaurant {
     private double avgPerChildPrice;
     @Column(name = "avg_per_adult_price")
     private double avgPerAdultPrice;
+
+    public ProductRestaurant(ProductRestaurantModificationModel productRestaurantModel) {
+        this.name = productRestaurantModel.getName();
+        this.avgPerChildPrice = productRestaurantModel.getAvgPerChildPrice();
+        this.avgPerAdultPrice = productRestaurantModel.getAvgPerAdultPrice();
+    }
 }

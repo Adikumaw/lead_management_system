@@ -1,5 +1,7 @@
 package com.jitu.lead_management.entity;
 
+import com.jitu.lead_management.model.ProductPlaceModificationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,4 +28,10 @@ public class ProductPlace {
     private double perChildPrice;
     @Column(name = "per_adult_price")
     private double perAdultPrice;
+
+    public ProductPlace(ProductPlaceModificationModel productPlaceModel) {
+        this.name = productPlaceModel.getName();
+        this.perChildPrice = productPlaceModel.getPerChildPrice();
+        this.perAdultPrice = productPlaceModel.getPerAdultPrice();
+    }
 }

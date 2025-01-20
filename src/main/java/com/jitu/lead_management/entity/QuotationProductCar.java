@@ -2,6 +2,9 @@ package com.jitu.lead_management.entity;
 
 import java.util.Date;
 
+import com.jitu.lead_management.model.QuotationProductCarModificationModel;
+import com.jitu.lead_management.utils.ProductUtils;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,12 +24,13 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "quotation_product_cars")
 public class QuotationProductCar {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "quotation_id")
-    private int quotationId;
+    // @Column(name = "quotation_id", insertable = false, updatable = false)
+    // private int quotationId;
     @Column(name = "product_id")
     private int productId;
     @Column(name = "name")
@@ -43,6 +47,16 @@ public class QuotationProductCar {
     private double price;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "quotation_id")
+    @JoinColumn(name = "quotation_id", nullable = false)
     private Quotation quotation;
+
+    public QuotationProductCar(QuotationProductCarModificationModel quotationProductCarModel) {
+        this.productId = ProductUtils.resolveProductId(quotationProductCarModel.getId());
+        this.name = quotationProductCarModel.getName();
+        this.noOfCars = quotationProductCarModel.getNoOfCars();
+        this.noOfDays = quotationProductCarModel.getNoOfDays();
+        this.fromDate = quotationProductCarModel.getFromDate();
+        this.toDate = quotationProductCarModel.getToDate();
+        this.price = quotationProductCarModel.getPrice();
+    }
 }

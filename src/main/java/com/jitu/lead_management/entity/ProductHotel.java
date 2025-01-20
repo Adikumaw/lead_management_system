@@ -1,5 +1,7 @@
 package com.jitu.lead_management.entity;
 
+import com.jitu.lead_management.model.ProductHotelModificationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,4 +28,10 @@ public class ProductHotel {
     private String roomType;
     @Column(name = "hourly_price")
     private double hourlyPrice;
+
+    public ProductHotel(ProductHotelModificationModel productHotelModel) {
+        this.name = productHotelModel.getName();
+        this.roomType = productHotelModel.getRoomType();
+        this.hourlyPrice = productHotelModel.getHourlyPrice();
+    }
 }

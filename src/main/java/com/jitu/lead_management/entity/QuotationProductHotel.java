@@ -2,6 +2,9 @@ package com.jitu.lead_management.entity;
 
 import java.util.Date;
 
+import com.jitu.lead_management.model.QuotationProductHotelModificationModel;
+import com.jitu.lead_management.utils.ProductUtils;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,8 +28,8 @@ public class QuotationProductHotel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
-    @Column(name = "quotation_id")
-    private int quotationId;
+    // @Column(name = "quotation_id", insertable = false, updatable = false)
+    // private int quotationId;
     @Column(name = "product_id")
     private int productId;
     @Column(name = "name")
@@ -45,6 +48,18 @@ public class QuotationProductHotel {
     private double price;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "quotation_id")
+    @JoinColumn(name = "quotation_id", nullable = false)
     private Quotation quotation;
+
+    public QuotationProductHotel(QuotationProductHotelModificationModel quotationProductHotelModel) {
+        this.productId = ProductUtils
+                .resolveProductId(quotationProductHotelModel.getId());
+        this.name = quotationProductHotelModel.getName();
+        this.roomType = quotationProductHotelModel.getRoomType();
+        this.noOfRooms = quotationProductHotelModel.getNoOfRooms();
+        this.noOfDays = quotationProductHotelModel.getNoOfDays();
+        this.checkInDate = quotationProductHotelModel.getCheckInDate();
+        this.checkOutDate = quotationProductHotelModel.getCheckOutDate();
+        this.price = quotationProductHotelModel.getPrice();
+    }
 }
