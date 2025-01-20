@@ -84,7 +84,7 @@ public class ItineraryServiceImpl implements ItineraryService {
             // Check if error Message has following values "Duplicate entry" or
             // "u_template_name_itinerary"
             String errorMessage = e.getMessage();
-            if (errorMessage.contains("Duplicate entry") || errorMessage.contains("u_template_name_itinerary")) {
+            if (errorMessage.contains("Duplicate entry") || errorMessage.contains("uq_template_name_it")) {
                 throw new DuplicateTemplateNameException("Duplicate template names are not allowed");
             } else {
                 throw e;
