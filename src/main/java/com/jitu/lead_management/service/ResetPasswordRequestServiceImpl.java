@@ -3,6 +3,7 @@ package com.jitu.lead_management.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.Miscellaneous.EmailTemplate;
@@ -12,8 +13,10 @@ import com.jitu.lead_management.repository.ResetPasswordRequestRepository;
 
 @Service
 public class ResetPasswordRequestServiceImpl implements ResetPasswordRequestService {
-    private String resetRequestLink = "http://localhost:3000/reset-password/confirm/";
-    private String applicationName = "Lead Management";
+    @Value("${password.reset.request.confirm.url}")
+    private String resetRequestLink;
+    @Value("${spring.application.name}")
+    private String applicationName;
     private String emailSubject = "Reset Your Password";
     private int expiration = 1;
 

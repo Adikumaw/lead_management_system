@@ -65,7 +65,7 @@ public class Lead {
     private Double budgetPerAdult;
     @Column(name = "no_of_children")
     private int noOfChildren;
-    @Column(name = "budget_per_children")
+    @Column(name = "budget_per_child")
     private Double budgetPerChild;
     @Column(name = "created_at")
     private Date createdAt;

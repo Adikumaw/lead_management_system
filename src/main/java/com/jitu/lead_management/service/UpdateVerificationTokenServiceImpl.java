@@ -3,6 +3,7 @@ package com.jitu.lead_management.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jitu.lead_management.Miscellaneous.EmailTemplate;
@@ -15,8 +16,10 @@ import com.jitu.lead_management.repository.UpdateVerificationTokenRepository;
 @Service
 public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTokenService {
 
-    private String updatePasswordLink = "http://localhost:8080/api/auth/verify-password-update?token=";
-    private String applicationName = "Lead Management";
+    @Value("${password.update.verify.url}")
+    private String passwordUpdateVerifyLink;
+    @Value("${spring.application.name}")
+    private String applicationName;
     private String emailSubjectUpdatePassword = "Confirm Your Password Change Request";
     private int expiration = 1;
 
@@ -46,7 +49,7 @@ public class UpdateVerificationTokenServiceImpl implements UpdateVerificationTok
         String email = user.getEmail();
         String verificationTemplate = EmailTemplate.PASSWORD_UPDATE_VERIFICATION_TEMPLATE;
         String formatedMessage = String.format(verificationTemplate, user.getName(),
-                updatePasswordLink + token, expiration,
+                passwordUpdateVerifyLink + token, expiration,
                 applicationName);
 
         try {
