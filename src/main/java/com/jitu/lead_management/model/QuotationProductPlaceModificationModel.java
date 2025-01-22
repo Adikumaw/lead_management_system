@@ -12,6 +12,10 @@ import lombok.NoArgsConstructor;
 public class QuotationProductPlaceModificationModel {
     private String id;
     private String name;
+    @JsonProperty("per_child_price")
+    private double perChildPrice;
+    @JsonProperty("per_adult_price")
+    private double perAdultPrice;
     @JsonProperty("no_of_children")
     private int noOfChildren;
     @JsonProperty("no_of_adults")

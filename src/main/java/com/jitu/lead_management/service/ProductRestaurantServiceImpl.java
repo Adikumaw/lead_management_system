@@ -30,25 +30,14 @@ public class ProductRestaurantServiceImpl implements ProductRestaurantService {
 
     @Override
     public int create(QuotationProductRestaurantModificationModel quotationProductRestaurant) {
-        // // Calculate total hours between checkInDate and CheckOutDate
-        // long diffInMillies = Math
-        // .abs(quotationProductRestaurant.getCheckOutDate().getTime()
-        // - quotationProductRestaurant.getCheckInDate().getTime());
-        // long totalHours = TimeUnit.HOURS.convert(diffInMillies,
-        // TimeUnit.MILLISECONDS);
+        // Create ProductRestaurant from QuotationProductRestaurantModificationModel
+        ProductRestaurant productRestaurant = new ProductRestaurant();
+        productRestaurant.setName(quotationProductRestaurant.getName());
+        productRestaurant.setAvgPerChildPrice(quotationProductRestaurant.getAvgPerChildPrice());
+        productRestaurant.setAvgPerAdultPrice(quotationProductRestaurant.getAvgPerAdultPrice());
 
-        // // Calculate hourly price from total price, number of rooms, and total hours
-        // double hourlyPrice = quotationProductRestaurant.getPrice()
-        // / (quotationProductRestaurant.getNoOfRooms() * totalHours);
-
-        // // Create ProductHotel from quotationProductRestaurantModificationModel
-        // ProductHotel productHotel = new ProductHotel();
-        // productHotel.setName(quotationProductRestaurant.getName());
-        // productHotel.setRoomType(quotationProductRestaurant.getRoomType());
-        // productHotel.setHourlyPrice(hourlyPrice);
-
-        // save(productHotel);
-        return 0;
+        productRestaurant = save(productRestaurant);
+        return productRestaurant.getProductId();
     }
 
     @Override
