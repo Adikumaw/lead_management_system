@@ -32,6 +32,10 @@ public class QuotationProductRestaurant {
     private int productId;
     @Column(name = "name")
     private String name;
+    @Column(name = "avg_per_child_price")
+    private double avgPerChildPrice;
+    @Column(name = "avg_per_adult_price")
+    private double avgPerAdultPrice;
     @Column(name = "no_of_children")
     private int noOfChildren;
     @Column(name = "no_of_adults")
@@ -46,6 +50,8 @@ public class QuotationProductRestaurant {
     public QuotationProductRestaurant(QuotationProductRestaurantModificationModel QuotationProductRestaurantModel) {
         this.productId = ProductUtils.resolveProductId(QuotationProductRestaurantModel.getId());
         this.name = QuotationProductRestaurantModel.getName();
+        this.avgPerChildPrice = QuotationProductRestaurantModel.getAvgPerChildPrice();
+        this.avgPerAdultPrice = QuotationProductRestaurantModel.getAvgPerAdultPrice();
         this.noOfChildren = QuotationProductRestaurantModel.getNoOfChildren();
         this.noOfAdults = QuotationProductRestaurantModel.getNoOfAdults();
         this.avgPrice = QuotationProductRestaurantModel.getAvgPrice();

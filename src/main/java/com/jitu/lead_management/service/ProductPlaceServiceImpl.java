@@ -30,7 +30,14 @@ public class ProductPlaceServiceImpl implements ProductPlaceService {
 
     @Override
     public int create(QuotationProductPlaceModificationModel quotationProductPlace) {
-        return 0;
+        // Create ProductPlace from QuotationProductPlaceModificationModel
+        ProductPlace productPlace = new ProductPlace();
+        productPlace.setName(quotationProductPlace.getName());
+        productPlace.setPerChildPrice(quotationProductPlace.getPerChildPrice());
+        productPlace.setPerAdultPrice(quotationProductPlace.getPerAdultPrice());
+
+        productPlace = save(productPlace);
+        return productPlace.getProductId();
     }
 
     @Override

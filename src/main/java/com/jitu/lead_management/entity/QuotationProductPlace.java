@@ -32,6 +32,10 @@ public class QuotationProductPlace {
     private int productId;
     @Column(name = "name")
     private String name;
+    @Column(name = "per_child_price")
+    private double perChildPrice;
+    @Column(name = "per_adult_price")
+    private double perAdultPrice;
     @Column(name = "no_of_children")
     private int noOfChildren;
     @Column(name = "no_of_adults")
@@ -46,6 +50,8 @@ public class QuotationProductPlace {
     public QuotationProductPlace(QuotationProductPlaceModificationModel QuotationProductPlaceModel) {
         this.productId = ProductUtils.resolveProductId(QuotationProductPlaceModel.getId());
         this.name = QuotationProductPlaceModel.getName();
+        this.perChildPrice = QuotationProductPlaceModel.getPerChildPrice();
+        this.perAdultPrice = QuotationProductPlaceModel.getPerAdultPrice();
         this.noOfChildren = QuotationProductPlaceModel.getNoOfChildren();
         this.noOfAdults = QuotationProductPlaceModel.getNoOfAdults();
         this.price = QuotationProductPlaceModel.getPrice();
