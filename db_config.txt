@@ -99,7 +99,7 @@ CREATE TABLE product_cars(
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     hourly_price DECIMAL(10,2) NOT NULL,
-    CONSTRAINT uq_name_pc UNIQUE (name);
+    CONSTRAINT uq_name_pc UNIQUE (name)
 );
 
 CREATE TABLE product_hotels(
@@ -107,7 +107,7 @@ CREATE TABLE product_hotels(
     name VARCHAR(100) NOT NULL,
     room_type VARCHAR(100) NOT NULL,
     hourly_price DECIMAL(10,2) NOT NULL,
-    CONSTRAINT uq_name_ph UNIQUE (name);
+    CONSTRAINT uq_name_ph UNIQUE (name)
 );
 
 CREATE TABLE product_restaurants(
@@ -115,7 +115,7 @@ CREATE TABLE product_restaurants(
     name VARCHAR(100) NOT NULL,
     avg_per_child_price DECIMAL(10,2) NOT NULL,
     avg_per_adult_price DECIMAL(10,2) NOT NULL,
-    CONSTRAINT uq_name_pr UNIQUE (name);
+    CONSTRAINT uq_name_pr UNIQUE (name)
 );
 
 CREATE TABLE product_places(
@@ -123,7 +123,7 @@ CREATE TABLE product_places(
     name VARCHAR(100) NOT NULL,
     per_child_price DECIMAL(10,2) NOT NULL,
     per_adult_price DECIMAL(10,2) NOT NULL,
-    CONSTRAINT uq_name_pp UNIQUE (name);
+    CONSTRAINT uq_name_pp UNIQUE (name)
 );
 
 CREATE TABLE quotation_product_cars (
