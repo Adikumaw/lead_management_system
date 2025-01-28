@@ -2,6 +2,7 @@ package com.jitu.lead_management.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -21,8 +22,10 @@ public class QuotationProductHotelModificationModel {
     @JsonProperty("no_of_days")
     private int noOfDays;
     @JsonProperty("check_in_date")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Kolkata")
     private Date checkInDate;
     @JsonProperty("check_out_date")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Kolkata")
     private Date checkOutDate;
     private double price;
 }
