@@ -17,4 +17,8 @@ public interface QuotationService {
 
     void deleteByIds(List<String> quotationIds);
 
+    void deleteById(String quotationId);
+
+    void deleteAll();
+
 }

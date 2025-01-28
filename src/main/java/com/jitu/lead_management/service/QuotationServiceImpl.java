@@ -139,4 +139,15 @@ public class QuotationServiceImpl implements QuotationService {
         quotationRepository.deleteByQuotationIdIn(intQuotationIds);
     }
 
+    @Override
+    public void deleteById(String quotationId) {
+        int intQuotationId = QuotationUtils.resolveQuotationId(quotationId);
+        quotationRepository.deleteById(intQuotationId);
+    }
+
+    @Override
+    public void deleteAll() {
+        quotationRepository.deleteAll();
+    }
+
 }

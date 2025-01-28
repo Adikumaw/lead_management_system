@@ -102,30 +102,30 @@ public class QuotationController {
         }
     }
 
-    // @DeleteMapping("/delete-by-id")
-    // public ResponseEntity<String> deleteById(@RequestParam String id) {
-    // try {
-    // quotationService.deleteById(id);
-    // return new ResponseEntity<>("Sucess", HttpStatus.OK);
-    // } catch (LeadManagementException e) {
-    // throw e;
-    // } catch (Exception e) {
-    // logger.error("Unknown error: " + e.getMessage(), e);
-    // throw new UnknownErrorException("Error: unknown error");
-    // }
-    // }
+    @DeleteMapping("/delete-by-id")
+    public ResponseEntity<String> deleteById(@RequestParam String id) {
+        try {
+            quotationService.deleteById(id);
+            return new ResponseEntity<>("Sucess", HttpStatus.OK);
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
 
-    // @DeleteMapping("/delete-all")
-    // public ResponseEntity<String> deleteAll() {
-    // try {
-    // quotationService.deleteAll();
-    // return new ResponseEntity<>("Sucess", HttpStatus.OK);
-    // } catch (LeadManagementException e) {
-    // throw e;
-    // } catch (Exception e) {
-    // logger.error("Unknown error: " + e.getMessage(), e);
-    // throw new UnknownErrorException("Error: unknown error");
-    // }
-    // }
+    @DeleteMapping("/delete-all")
+    public ResponseEntity<String> deleteAll() {
+        try {
+            quotationService.deleteAll();
+            return new ResponseEntity<>("Sucess", HttpStatus.OK);
+        } catch (LeadManagementException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Unknown error: " + e.getMessage(), e);
+            throw new UnknownErrorException("Error: unknown error");
+        }
+    }
 
 }
